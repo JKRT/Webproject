@@ -1,5 +1,5 @@
-TDDD97 - Web Programming
-========================
+Web Programming
+===============
 
 Collaborative repository for laborations and project.
 
