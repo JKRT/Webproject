@@ -8,6 +8,5 @@
 * [Python 2 Reference](https://docs.python.org/2/reference/)
 * [Python 3 Reference](https://docs.python.org/3/reference/)
 * [Python Quick Reference](http://www.cs.put.poznan.pl/csobaniec/software/python/py-qrc.html)
-* [Python Quick Reference](http://www.cs.put.poznan.pl/csobaniec/software/python/py-qrc.html)
 * [SQLite Python 2 Reference](https://docs.python.org/2/library/sqlite3.html)
 * [SQLite Python 3 Reference](https://docs.python.org/3.5/library/sqlite3.html)
