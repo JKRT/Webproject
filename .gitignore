@@ -24,6 +24,7 @@ Temporary Items
 .apdisk
 
 
+### Vim ###
 
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
@@ -32,7 +33,9 @@ Session.vim
 .netrwhist
 *~
 
+### qq ###
 
+### Emacs ###
 
 # -*- mode: gitignore; -*-
 *~
