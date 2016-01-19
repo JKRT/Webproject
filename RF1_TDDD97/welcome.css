@@ -8,12 +8,11 @@ div#wrapper {
     width:600px;
     height:500px;
     margin: auto;
-    border:1px solid #000; /* tmp*/
 }
 
 
 div#LOGO_SLOGAN {
-    text-align: center; 
+    text-align: center;
     position: absolute;
     border:1px solid #000;
     width:340px;
@@ -24,6 +23,7 @@ div#LOGO_SLOGAN {
 div#LOGIN {
     text-align: center; 
     position: absolute;
+    background:#fff;
     border:1px solid #000;
     width:250px;
     height:90px;
@@ -36,8 +36,32 @@ div#SIGNUP{
     text-align: center; 
     position: absolute;
     border:1px solid #000;
+    background:#fff;
     width:250px;
     height:300px;
     top: 200px;
     left: 350px;
+}
+
+label.input {
+    display: inline-block;
+    text-align: left;
+    width: 85px;
+}
+
+div.inputbox {
+    text-align: left;
+    width: 250px;
+}
+
+div.loginBox {
+    text-align: right;
+    width: 250px;
+}
+
+div#signUpText{
+    text-align: center; 
+    position: relative;
+    width: 250;
+    top: 20;
 }

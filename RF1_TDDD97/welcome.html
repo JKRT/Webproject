@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>
-      Welcome
-    </title>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
     <link rel="stylesheet" type="text/css" href="welcome.css" />
   </head>
   <body>
     <div id="wrapper">
 
       <div id="LOGO_SLOGAN">
-	LOGO AND SLOGAN
+	<img src="wimage.png">
       </div><!-- end logo div -->
 
       <div id="LOGIN">
-	LOGIN
+	<form>
+	  <div style="height:13px;"></div>
+          <div class="inputbox"><label class="input">Email</label> <input type="text" name="email"></div>
+          <div class="inputbox"><label class="input">Password</label> <input type="password" name="password"></div>
+	  <div class="loginBox"><label class="input"></label> <input type="submit" value="login" name="login"></div>  
+	</form>
       </div>
-      
       <div id="SIGNUP">
-	SIGNUP
+	<div id="signUpText">  <h2> Sign up here </h2></div>
+	<div class="inputbox"><label class="input">First name</label> <input type="text" name="firstName"></div>
+	
       </div>
 
     </div>  <!-- End of wrapper-->
