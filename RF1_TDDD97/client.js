@@ -1,6 +1,7 @@
- displayView = function(){
-// the code required to display a view
+ displayView = function() {
+    document.getElementById("content").innerHTML = document.getElementById("welcomeView").text;
 };
-window.onload = function(){
-//code that is executed as the page is loaded. //You shall put your own custom code here. window.alert("Hello TDDD97!");
+
+window.onload = function() {
+    displayView();
 };
