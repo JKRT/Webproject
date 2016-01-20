@@ -25,6 +25,7 @@ div#Login{
     position: absolute;
     background:#fff;
     border:1px solid #000;
+    overflow: auto;
     width:250px;
     height:90px;
     top: 100px;
@@ -37,6 +38,7 @@ div#Signup{
     position: absolute;
     border:1px solid #000;
     background:#fff;
+    overflow: auto;
     width:250px;
     height:300px;
     top: 200px;
@@ -67,26 +69,24 @@ div.loginWrapper {
     width: 250px;
 }
 
-input.inputBox {
-    width: 50%
-}
-
 div.textSeparator {
-    float: left;
+    text-align: left;
     display: inline-block;
+    width: 50%; 
 }
 
 div.formSeparator {
+    text-align: right; 
     float: right;
-    display: inline-block;
+    width: 45%;
 }
 
 input.formSize {
-    width: 145px;
+    width: 100%;
 }
 
 select.formSize {
-    width: 153px;
+    width: 100%;
 }
 
 div#signUpText{
