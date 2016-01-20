@@ -3,15 +3,17 @@
 };
 
 
-validPasswd = function (password, required_password) {
- alert("HELLO BABY");
+validatePassword = function() {
+    // var password = document.getElementById("password2").InnerHTML.formSize
+    // alert(password)
+    // var repeatedPassword = document.getElementById("repeatPsw").InnerHTML.formSize
+    // if(password != null && enteredPassword != null){
+    // 	alert("yea baby");
+    // }
+    alert("Hoochy mumma");
 }
 
 window.onload = function() {
-
-    var password = document.getElementById("password");
-    var repeatPsw = document.getElementById("repeatPsw");
-
-    password.onchange = validPasswd(document.getElementById("password"),document.getElementById("repeatPsw"));
-    repeatPsw.onkeyup = (validPasswd (document.getElementById("password"),document.getElementById("repeatPsw")));
+    displayView();
+    document.getElementById("signUp").onclick = function() {validatePassword()};
 };
