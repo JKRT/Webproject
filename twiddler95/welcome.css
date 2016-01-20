@@ -30,6 +30,7 @@ div.panel {
     height: 335px;
     overflow: visible;
     padding-top: 60px;
+    text-align: center;
 
     top: 0px;
     left: 0px;
@@ -38,7 +39,7 @@ div.panel {
 
 #loginPanel {
     width: 240px;
-    height: 80px;
+    height: 85px;
 
     top: 0px;
     left: 350px;
@@ -59,20 +60,30 @@ div.inputContainer {
     float: right;
 }
 
+
+input, select, textarea {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 input.fixedLength {
-    width: 100px;
+    width: 50%;
+}
+
+select.fixedSize {
+    width: 50%;
 }
 
 input.fixedSize {
-    width: 60px;
+    width: 30%;
 }
 
 #signUpPanel {
     width: 240px;
-    height: 295px;
+    height: 285px;
 
-    top: 100px;
+    top: 105px;
     left: 350px;
     position: absolute;
-    padding-top: 0px;
 }

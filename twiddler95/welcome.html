@@ -9,24 +9,22 @@
     <body>
         <div id="mainContainer">
             <div id="logoPanel" class="panel">
-                <center>
-                    <img src="w95image.png" width="200px">
-                    <h2>Twiddler95</h2>
-                    Socializing with other people around the world
-                    with the help of old computers!
-                </center>
+                <img src="w95image.png" alt="Twiddler95 Logo" width="200">
+                <h2>Twiddler95</h2>
+                Socializing with other people around the world
+                with the help of old computers!
             </div>
 
             <div id="loginPanel" class="panel">
                 <form>
                     <div class="inputContainer">
-                        <label class="leftAlign" for="email">E-mail</label>
-                        <input class="rightAlign  fixedLength" type="email" name="email" required>
+                        <label class="leftAlign fixedLength" for="lEmail">E-mail</label>
+                        <input class="rightAlign  fixedLength" type="email" id="lEmail" required>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="leftAlign" for="password">Password</label>
-                        <input class="rightAlign fixedLength" type="password" name="password" required>
+                        <label class="leftAlign fixedLength" for="lPassword">Password</label>
+                        <input class="rightAlign fixedLength" type="password" id="lPassword" required>
                     </div>
 
                     <div class="inputContainer">
@@ -36,50 +34,55 @@
             </div>
 
             <div id="signUpPanel" class="panel">
-                <center><h3>Sign up now!</h3><center>
+                <div style="text-align: center;">
+                    <strong>Sign up now!</strong>
+                </div><br>
                 <form>
                     <div class="inputContainer">
-                        <label class="leftAlign" for="firstName">First name</label>
-                        <input class="rightAlign  fixedLength" type="text" name="firstName" required>
+                        <label class="leftAlign fixedLength" for="suFirstName">First name</label>
+                        <input class="rightAlign  fixedLength" type="text" id="suFirstName" required>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="leftAlign" for="familyName">Family name</label>
-                        <input class="rightAlign fixedLength" type="text" name="familyName" required>
+                        <label class="leftAlign fixedLength" for="suFamilyName">Family name</label>
+                        <input class="rightAlign fixedLength" type="text" id="suFamilyName" required>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="leftAlign" for="gender">Gender</label>
-                        <input class="rightAlign fixedLength" type="text" name="gender" required>
+                        <label class="leftAlign fixedLength" for="suGender">Gender</label>
+                        <select class="rightAlign fixedSize" id="suGender">
+                            <option value="suMale">Male</option>
+                            <option value="suFemale">Female</option>
+                        </select>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="leftAlign" for="city">City</label>
-                        <input class="rightAlign fixedLength" type="text" name="city" required>
+                        <label class="leftAlign fixedLength" for="suCity">City</label>
+                        <input class="rightAlign fixedLength" type="text" id="suCity" required>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="leftAlign" for="country">Country</label>
-                        <input class="rightAlign fixedLength" type="text" name="country" required>
+                        <label class="leftAlign fixedLength" for="suCountry">Country</label>
+                        <input class="rightAlign fixedLength" type="text" id="suCountry" required>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="leftAlign" for="email">E-mail</label>
-                        <input class="rightAlign fixedLength" type="email" name="email" required>
+                        <label class="leftAlign fixedLength" for="suEmail">E-mail</label>
+                        <input class="rightAlign fixedLength" type="email" id="suEmail" required>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="leftAlign" for="password">Password</label>
-                        <input class="rightAlign fixedLength" type="password" name="password" required>
+                        <label class="leftAlign fixedLength" for="suPassword">Password</label>
+                        <input class="rightAlign fixedLength" type="password" id="suPassword" required>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="leftAlign" for="repeatPwd">Repeat PWD</label>
-                        <input class="rightAlign fixedLength" type="password" name="repeatPwd" required>
+                        <label class="leftAlign fixedLength" for="suRepeatPwd">Repeat PWD</label>
+                        <input class="rightAlign fixedLength" type="password" id="suRepeatPwd" required>
                     </div>
 
                     <div class="inputContainer">
-                        <input class="rightAlign fixedSize" type="submit" value="sign in">
+                        <input class="rightAlign fixedSize" type="submit" value="sign up">
                     </div>
                 </form>
             </div>
