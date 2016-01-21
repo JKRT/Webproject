@@ -4,16 +4,17 @@
 
 
 validatePassword = function() {
-    // var password = document.getElementById("password2").InnerHTML.formSize
-    // alert(password)
-    // var repeatedPassword = document.getElementById("repeatPsw").InnerHTML.formSize
-    // if(password != null && enteredPassword != null){
-    // 	alert("yea baby");
-    // }
-    alert("Hoochy mumma");
+    var password = document.getElementById("password2").value;
+    var enteredPassword  = document.getElementById("repeatPsw").value ;
+
+    if( password === enteredPassword ) {
+        return true;
+    }
+
+    return false;
 }
 
 window.onload = function() {
     displayView();
-    document.getElementById("signUp").onclick = function() {validatePassword()};
+    document.getElementById("signUpForm").onsubmit = function() {return validatePassword()};
 };
