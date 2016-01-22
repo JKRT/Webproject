@@ -17,6 +17,7 @@ div#LogoSlogan {
     border:1px solid #000;
     width:340px;
     height:400px;
+    background:#fff;
     top: 100px;
 }
 
@@ -93,4 +94,71 @@ div#signUpText{
     text-align: center; 
     width: 250px;
     top: 20px;
+}
+
+.tabWrapper {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 100%;
+}
+
+.tabButton{
+    width: 30%;
+    height: 25%;
+    border: 1px solid #000;
+    background-color: #ccc;
+    display: inline-block;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    border-radius: 25px;
+}
+
+.tabButton:hover{
+    border: 1px solid #000;
+    background-color: #aaa;
+}
+
+#logoutArea {
+    position: absolute;
+    bottom: 0px;
+}
+
+#homePanel {
+    text-align: left;
+}
+
+#chatPanel {
+    height: 70%;
+    width: 90%;
+    border: 1px solid #000;
+    top: 10%; left: 50%;
+    transform: translate(-50%,-10%);
+    background-color: #ccc;
+    position: absolute;
+    border-radius: 25px;
+    text-align: left;
+    padding: 10px;
+    overflow: auto;
+}
+
+#lowerLogoSloganPanel {
+    width: 100%;
+    height: 15%;
+    bottom: 0;
+    position:absolute;
+}
+
+#chatBox {
+    width:75%;
+    height:90%;
+    resize: none;
+    float: left;
+}
+
+button.chatButton {
+    width: 22%;
 }
