@@ -84,7 +84,8 @@ span.formText {
 }
 
 input.formInput {
-    width: 45%;
+    width: 50%;
+	box-sizing: border-box;
 }
 
 select.formInput {
