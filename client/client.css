@@ -1,0 +1,166 @@
+body {
+    font-size: 16px;
+    font-family: sans-serif;
+    background-color: #208c71;
+}
+
+div.panel {
+    position: absolute;
+    background-color: #6C6C6C;
+    box-shadow: 4px 4px #006A50;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 1px;
+    overflow: auto;
+    padding: 5px;
+}
+
+#wrapper {
+    position: relative;
+    width: 600px;
+    height: 400px;
+    margin: auto;
+    top: 100px;
+}
+
+
+#leftPanel {
+    width: 330px;
+    height: 390px;
+}
+
+#upperRightPanel {
+    width: 240px;
+    height: 80px;
+    left: 350px;
+}
+
+#lowerRightPanel {
+    width: 240px;
+    height: 290px;
+    left: 350px;
+    top: 100px;
+}
+
+#signUpText {
+    text-align: center;
+    margin-top: 5px;
+}
+
+label.input {
+    display: inline-block;
+    text-align: left;
+    width: 35%;
+}
+
+div.inputWrapper {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    overflow: hidden;
+}
+
+div.loginWrapper {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    text-align: right;
+    width: 250px;
+}
+
+.leftAlign {
+    float: left;
+}
+
+.rightAlign {
+    float: right;
+}
+
+span.formText {
+    width: 50%;
+    text-align: left;
+}
+
+input.formInput {
+    width: 45%;
+}
+
+select.formInput {
+    width: 50%;
+}
+
+input.formSubmit {
+    width: 25%;
+}
+
+div#signUpText{
+    text-align: center; 
+    width: 250px;
+    top: 20px;
+}
+
+.tabWrapper {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 100%;
+}
+
+.tabButton{
+    width: 30%;
+    height: 25%;
+    border: 1px solid #000;
+    background-color: #ccc;
+    display: inline-block;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    border-radius: 25px;
+}
+
+.tabButton:hover{
+    border: 1px solid #000;
+    background-color: #aaa;
+}
+
+#logoutArea {
+    position: absolute;
+    bottom: 0px;
+}
+
+#homePanel {
+    text-align: left;
+}
+
+#chatPanel {
+    height: 70%;
+    width: 90%;
+    border: 1px solid #000;
+    top: 10%; left: 50%;
+    transform: translate(-50%,-10%);
+    background-color: #ccc;
+    position: absolute;
+    border-radius: 25px;
+    text-align: left;
+    padding: 10px;
+    overflow: auto;
+}
+
+#lowerLogoSloganPanel {
+    width: 100%;
+    height: 15%;
+    bottom: 0;
+    position:absolute;
+}
+
+#chatBox {
+    width: 75%;
+    height: 90%;
+    resize: none;
+    float: left;
+}
+
+button.chatButton {
+    width: 22%;
+}
