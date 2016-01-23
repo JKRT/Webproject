@@ -53,13 +53,19 @@ function showHome() {
     document.getElementById("chatPanel").style.display = "block";
     document.getElementById("lowerLogoSloganPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
+
+    function writeToHome ( ElementById , hpDataMember ){
+	document.getElementById( ElementById ).innerHTML = hpDataMember; 
+    }
+    
     var homePanelObject = serverstub.getUserDataByToken(sessionStorage.token);
-    document.getElementById("homeEmail").innerHTML = homePanelObject.data.email;
-    document.getElementById("homeFirstName").innerHTML = homePanelObject.data.firstname;
-    document.getElementById("homeFamilyName").innerHTML = homePanelObject.data.familyname;
-    document.getElementById("homeGender").innerHTML = homePanelObject.data.gender;
-    document.getElementById("homeCity").innerHTML = homePanelObject.data.city;
-    document.getElementById("homeCountry").innerHTML = homePanelObject.data.country;
+    writeToHome("homeEmail" , homePanelObject.data.email);
+    writeToHome("homeFirstName" , homePanelObject.data.firstname); 
+    writeToHome("homeFamilyName" , homePanelObject.data.familyname);
+    writeToHome("homeGender" ,  homePanelObject.data.gender);
+    writeToHome("homeCity" , homePanelObject.data.city);
+    writeToHome("homeCountry" ,  homePanelObject.data.country);
+    
     var chatLog = "";
     for (var message of serverstub.getUserMessagesByToken(sessionStorage.token).data) {
         chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
