@@ -53,7 +53,7 @@ div.emptyPanel {
     top: 100px;
 }
 
-#signUpText {
+.panelTitle {
     text-align: center;
     margin-top: 5px;
 }
