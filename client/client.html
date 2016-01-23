@@ -9,9 +9,9 @@
 
 	<script id="welcomeView" type="text/view">
 	    <div id="wrapper">
-		<div id="leftPanel" class="panel"><img src="logo.png"></div><!-- end logo div -->
+		<div id="leftPanel" class="emptyPanel" style="width: 340px; height: 400px;"><img src="logo.png"></div>
 		<div id="upperRightPanel" class="panel">
-		    <form id="loginForm" method="post">
+		    <form id="loginForm" method="post" onsubmit="checkLogin();">
 			<div class="inputWrapper">
 				<span class="formText leftAlign">E-mail</span>
 			    <input class="formInput rightAlign" type="email" id="email1" required>
@@ -30,7 +30,7 @@
 
 		<div id="lowerRightPanel" class="panel">
 			<h3 id="signUpText">Sign up here!</h3>
-		    <form id="signUpForm" method="post">
+		    <form id="signUpForm" method="post" onsubmit="checkSignUp();">
 			<div class="inputWrapper">
 			    <span class="formText leftAlign">First name</span>
 			    <input class="formInput rightAlign" type="text" id="firstName" required>
@@ -105,7 +105,7 @@
 		<div id="lowerRightPanel" class="panel">
 		    <div id="accountPanel" >
 			<div id="signUpText">  <h4> Change Password  </h4></div>
-			<form id="changePasswordForm" method="post">
+			<form id="changePasswordForm" method="post" onsubmit="changePassword();">
 			    <div class="inputWrapper">
 				<span class="formText leftAlign">Old password</span>
 				<input class="formInput rightAlign" type="password" id="oldPassword" required title= "Please enter at least 6 characters "pattern=".{6,}" >
