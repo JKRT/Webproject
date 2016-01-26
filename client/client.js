@@ -61,17 +61,8 @@ function showHome() {
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
 
-    function writeToHome ( ElementById , hpDataMember, desc){
-        document.getElementById( ElementById ).innerHTML = "<strong>" + desc + "</strong>" + hpDataMember;
-    }
-
-    var homePanelObject = serverstub.getUserDataByToken(sessionStorage.token);
-    writeToHome("homeEmail" , homePanelObject.data.email, "E-mail: ");
-    writeToHome("homeFirstName" , homePanelObject.data.firstname, "First name: ");
-    writeToHome("homeFamilyName" , homePanelObject.data.familyname, "Family name: ");
-    writeToHome("homeGender" ,  homePanelObject.data.gender, "Gender: ");
-    writeToHome("homeCity" , homePanelObject.data.city, "City: ");
-    writeToHome("homeCountry" ,  homePanelObject.data.country, "Country: ");
+    var userData = serverstub.getUserDataByToken(sessionStorage.token);
+    initHome(userData);
 
     var chatLog = "";
     for (var message of serverstub.getUserMessagesByToken(sessionStorage.token).data) {
@@ -81,20 +72,20 @@ function showHome() {
     document.getElementById("chatPanel").innerHTML = chatLog;
 }
 
-/*
+
 function initHome(userData) {
  function writeToHome ( ElementById , hpDataMember, desc){
         document.getElementById( ElementById ).innerHTML = "<strong>" + desc + "</strong>" + hpDataMember;
     }
-    writeToHome("homeEmail" , homePanelObject.data.email, "E-mail: ");
-    writeToHome("homeFirstName" , homePanelObject.data.firstname, "First name: ");
-    writeToHome("homeFamilyName" , homePanelObject.data.familyname, "Family name: ");
-    writeToHome("homeGender" ,  homePanelObject.data.gender, "Gender: ");
-    writeToHome("homeCity" , homePanelObject.data.city, "City: ");
-    writeToHome("homeCountry" ,  homePanelObject.data.country, "Country: ");
+    writeToHome("homeEmail" , userData.data.email, "E-mail: ");
+    writeToHome("homeFirstName" , userData.data.firstname, "First name: ");
+    writeToHome("homeFamilyName" , userData.data.familyname, "Family name: ");
+    writeToHome("homeGender" ,  userData.data.gender, "Gender: ");
+    writeToHome("homeCity" , userData.data.city, "City: ");
+    writeToHome("homeCountry" ,  userData.data.country, "Country: ");
 
 }
-*/
+
 
 function showAccount() {
     document.getElementById("accountPanel").style.display = "block";
