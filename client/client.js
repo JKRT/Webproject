@@ -57,7 +57,7 @@ function checkLogin() {
 function showHome() {
     document.getElementById("homePanel").style.display = "block";
     document.getElementById("chatPanel").style.display = "block";
-    document.getElementById("lowerLogoSloganPanel").style.display = "block";
+    document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
 
@@ -91,7 +91,7 @@ function showAccount() {
     document.getElementById("accountPanel").style.display = "block";
     document.getElementById("homePanel").style.display = "none";
     document.getElementById("chatPanel").style.display = "none";
-    document.getElementById("lowerLogoSloganPanel").style.display = "none";
+    document.getElementById("chatBoxPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
 }
 
@@ -99,7 +99,7 @@ function showBrowse() {
     console.log("Browse called");
     document.getElementById("homePanel").style.display = "block";
     document.getElementById("chatPanel").style.display = "block";
-    document.getElementById("lowerLogoSloganPanel").style.display = "block";
+    document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "block"
 
