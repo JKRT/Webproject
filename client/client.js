@@ -6,27 +6,29 @@ displayView = function() {
     } else {
         console.log("trying to fetch welcome view");
         document.getElementById("content").innerHTML = document.getElementById("welcomeView").text;
+        // addCustomValidation();
     }
 };
-
 
 function checkSignUp() {
     if(document.getElementById("password2").value === document.getElementById("repeatPsw").value) {
         var dataObject = {email: document.getElementById("email2").value,
-                        password: document.getElementById("password2").value,
-                        firstname: document.getElementById("firstName").value,
-                        familyname: document.getElementById("familyName").value,
-                        gender: document.getElementById("gender").value,
-                        city: document.getElementById("city").value,
-                        country: document.getElementById("country").value};
-
+            password: document.getElementById("password2").value,
+            firstname: document.getElementById("firstName").value,
+            familyname: document.getElementById("familyName").value,
+            gender: document.getElementById("gender").value,
+            city: document.getElementById("city").value,
+            country: document.getElementById("country").value};
         var signUpObject = serverstub.signUp(dataObject);
-        if (!signUpObject.success) {
-            alert(signUpObject.message);
-            return false;
-        }
 
-        return true;
+        if (signUpObject.success) {
+            var email2 = document.getElementById("email2");
+            email2.setCustomValidity("");
+            document.getElementById("signUpForm").reset();
+        } else {
+            var email2 = document.getElementById("email2");
+            email2.setCustomValidity("User already exists!");
+        }
     }
 
     return false;
@@ -38,14 +40,18 @@ function checkLogin() {
     var signInObject = serverstub.signIn(email,password);
 
     if(!signInObject.success) {
-        alert(signInObject.message);
-        return false;
+        console.log("Tyv'r kompis, no login")
+        var email1 = document.getElementById("email1");
+        email1.setCustomValidity("User doesn't exist!");
     } else {
         //Save the token in the browser...
+        var email1 = document.getElementById("email1");
+        email1.setCustomValidity("");
         sessionStorage.token = signInObject.data;
-        return true;
+        displayView();
     }
 
+    return false;
 }
 
 function showHome() {
@@ -53,32 +59,59 @@ function showHome() {
     document.getElementById("chatPanel").style.display = "block";
     document.getElementById("lowerLogoSloganPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
+    document.getElementById("browsePanel").style.display = "none";
 
-    function writeToHome ( ElementById , hpDataMember ){
-	document.getElementById( ElementById ).innerHTML = hpDataMember; 
+    function writeToHome ( ElementById , hpDataMember, desc){
+        document.getElementById( ElementById ).innerHTML = "<strong>" + desc + "</strong>" + hpDataMember;
     }
-    
+
     var homePanelObject = serverstub.getUserDataByToken(sessionStorage.token);
-    writeToHome("homeEmail" , homePanelObject.data.email);
-    writeToHome("homeFirstName" , homePanelObject.data.firstname); 
-    writeToHome("homeFamilyName" , homePanelObject.data.familyname);
-    writeToHome("homeGender" ,  homePanelObject.data.gender);
-    writeToHome("homeCity" , homePanelObject.data.city);
-    writeToHome("homeCountry" ,  homePanelObject.data.country);
-    
+    writeToHome("homeEmail" , homePanelObject.data.email, "E-mail: ");
+    writeToHome("homeFirstName" , homePanelObject.data.firstname, "First name: ");
+    writeToHome("homeFamilyName" , homePanelObject.data.familyname, "Family name: ");
+    writeToHome("homeGender" ,  homePanelObject.data.gender, "Gender: ");
+    writeToHome("homeCity" , homePanelObject.data.city, "City: ");
+    writeToHome("homeCountry" ,  homePanelObject.data.country, "Country: ");
+
     var chatLog = "";
     for (var message of serverstub.getUserMessagesByToken(sessionStorage.token).data) {
         chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
-    } 
+    }
 
     document.getElementById("chatPanel").innerHTML = chatLog;
 }
+
+/*
+function initHome(userData) {
+ function writeToHome ( ElementById , hpDataMember, desc){
+        document.getElementById( ElementById ).innerHTML = "<strong>" + desc + "</strong>" + hpDataMember;
+    }
+    writeToHome("homeEmail" , homePanelObject.data.email, "E-mail: ");
+    writeToHome("homeFirstName" , homePanelObject.data.firstname, "First name: ");
+    writeToHome("homeFamilyName" , homePanelObject.data.familyname, "Family name: ");
+    writeToHome("homeGender" ,  homePanelObject.data.gender, "Gender: ");
+    writeToHome("homeCity" , homePanelObject.data.city, "City: ");
+    writeToHome("homeCountry" ,  homePanelObject.data.country, "Country: ");
+
+}
+*/
 
 function showAccount() {
     document.getElementById("accountPanel").style.display = "block";
     document.getElementById("homePanel").style.display = "none";
     document.getElementById("chatPanel").style.display = "none";
     document.getElementById("lowerLogoSloganPanel").style.display = "none";
+    document.getElementById("browsePanel").style.display = "none";
+}
+
+function showBrowse() {
+    console.log("Browse called");
+    document.getElementById("homePanel").style.display = "block";
+    document.getElementById("chatPanel").style.display = "block";
+    document.getElementById("lowerLogoSloganPanel").style.display = "block";
+    document.getElementById("accountPanel").style.display = "none";
+    document.getElementById("browsePanel").style.display = "block"
+
 }
 
 function logout() {
@@ -104,12 +137,11 @@ function postMessageToSelf() {
     postMessage(homePanelObject.data.email);
 }
 
-
 function changePassword() {
     console.log("Called changePassword()");
-    alert(serverstub.changePassword(sessionStorage.token, 
-                document.getElementById("oldPassword").value,
-                document.getElementById("newPassword").value).message);
+    alert(serverstub.changePassword(sessionStorage.token,
+                                    document.getElementById("oldPassword").value,
+                                    document.getElementById("newPassword").value).message);
 }
 
 window.onload = function() {
