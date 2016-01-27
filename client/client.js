@@ -12,6 +12,12 @@ displayView = function() {
         // addCustomValidation();
     }
 };
+
+function resetSignUpValidation() {
+    var email2 = document.getElementById("email2");
+    email2.setCustomValidity("");
+}
+
 /*
  *  Checks the the password for the signup form is correct. 
  */
@@ -28,8 +34,6 @@ function checkSignUp() {
         var signUpObject = serverstub.signUp(dataObject);
 
         if (signUpObject.success) {
-            var email2 = document.getElementById("email2");
-            email2.setCustomValidity("");
             document.getElementById("signUpForm").reset();
         } else {
             var email2 = document.getElementById("email2");
@@ -38,6 +42,11 @@ function checkSignUp() {
     }
 
     return false;
+}
+
+function resetLoginValidation() {
+    var email1 = document.getElementById("email1");
+    email1.setCustomValidity("");
 }
 
 /*
@@ -54,8 +63,6 @@ function checkLogin() {
         email1.setCustomValidity("User doesn't exist!");
     } else {
         //Save the token in the browser...
-        var email1 = document.getElementById("email1");
-        email1.setCustomValidity("");
         sessionStorage.token = signInObject.data;
         displayView();
     }
@@ -136,7 +143,7 @@ function browseUsers(){
 }
 function logout() {
     console.log("logout() called");
-    alert(serverstub.signOut(sessionStorage.token).message);
+    serverstub.signOut(sessionStorage.token);
     sessionStorage.removeItem("token");
     displayView();
 }
@@ -149,7 +156,7 @@ function reloadMessages () {
 function postMessage(recipient) {
     console.log("postMessage() called");
     var messageContent = document.getElementById("chatBox");
-    alert(serverstub.postMessage(sessionStorage.token, messageContent.value, recipient).message);
+    serverstub.postMessage(sessionStorage.token, messageContent.value, recipient);
     messageContent.value = "";
     reloadMessages();
 }
@@ -161,9 +168,10 @@ function postMessageToSelf() {
 
 function changePassword() {
     console.log("Called changePassword()");
-    alert(serverstub.changePassword(sessionStorage.token,
+    serverstub.changePassword(sessionStorage.token,
                                     document.getElementById("oldPassword").value,
-                                    document.getElementById("newPassword").value).message);
+                                    document.getElementById("newPassword").value);
+    document.getElementById("changePasswordForm").reset();
     return false;
 }
 
