@@ -81,13 +81,6 @@ function showHome() {
 
     var userData = serverstub.getUserDataByToken(sessionStorage.token);
     initHome(userData);
-
-    var chatLog = "";
-    for (var message of serverstub.getUserMessagesByToken(sessionStorage.token).data) {
-        chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
-    }
-
-    document.getElementById("chatPanel").innerHTML = chatLog;
 }
 
 
@@ -102,6 +95,13 @@ function initHome(userData) {
     writeToHome("homeGender" ,  userData.data.gender, "Gender: ");
     writeToHome("homeCity" , userData.data.city, "City: ");
     writeToHome("homeCountry" ,  userData.data.country, "Country: ");
+
+    var chatLog = "";
+    for (var message of serverstub.getUserMessagesByEmail(sessionStorage.token,userData.data.email).data) {
+        chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
+    }
+
+    document.getElementById("chatPanel").innerHTML = chatLog;
 
 }
 
@@ -127,6 +127,8 @@ function showBrowse() {
     document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "block"
+   // initHome(userData);
+   browseUsers();
 }
 
 function browseUsers(){
@@ -134,7 +136,7 @@ function browseUsers(){
     var email = document.getElementById("email3").value;
 
     if(email === ""){
-	return false;
+        return false;
     }
     
     userData =  serverstub.getUserDataByEmail(sessionStorage.token,email);
@@ -152,26 +154,26 @@ function reloadMessages () {
     //Observe that the context can only be in browser or home panel mode
     currentView();
 }
-
-function postMessage(recipient) {
+/* Handles message posting , if browse is activated we will fetch the email corresponding to
+* to the users that we are currently viewing. */
+function postMessage() {
     console.log("postMessage() called");
+    if(currentView === showBrowse )
+        var recipient = document.getElementById("email3").value;
+
     var messageContent = document.getElementById("chatBox");
     serverstub.postMessage(sessionStorage.token, messageContent.value, recipient);
     messageContent.value = "";
     reloadMessages();
 }
 
-function postMessageToSelf() {
-    var homePanelObject = serverstub.getUserDataByToken(sessionStorage.token);
-    postMessage(homePanelObject.data.email);
-}
-
 function changePassword() {
     console.log("Called changePassword()");
-    serverstub.changePassword(sessionStorage.token,
-                                    document.getElementById("oldPassword").value,
-                                    document.getElementById("newPassword").value);
-    document.getElementById("changePasswordForm").reset();
+    if(serverstub.changePassword(sessionStorage.token,
+            document.getElementById("oldPassword").value,
+            document.getElementById("newPassword").value).success) {
+        document.getElementById("changePasswordForm").reset();
+    }
     return false;
 }
 
