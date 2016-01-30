@@ -1,9 +1,9 @@
 from flask import *
 import uuid
 import json
+import database_helper
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def hello_world():
@@ -26,7 +26,7 @@ def get_niklas():
 
 @app.route('/login', methods=['POST'])
 def sign_in():
-    if valid_login(request.form['email1'],
+    if database_helper.sign_in(request.form['email1'],
                    request.form['password1']):
         return json.dumps({"success": True,
                            "message": "Successfully signed in.",
@@ -36,8 +36,7 @@ def sign_in():
                            "message": "Wrong username or password."})
 
 
-def valid_login(email, password):
-    return True
+
 
 
 def generate_token():
@@ -46,3 +45,4 @@ def generate_token():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    database_helper.close()

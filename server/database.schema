@@ -1,1 +1,24 @@
 -- Contains the sql script for the database.
+
+DROP TABLE IF EXISTS users;
+CREATE TABLE users(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name TEXT,
+    family_name TEXT,
+    email TEXT,
+    city TEXT,
+    country TEXT,
+    password TEXT,
+    gender TEXT
+);
+
+DROP TABLE IF EXISTS messages;
+CREATE TABLE messages(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER,
+    recipient_id INTEGER,
+    sent_date DATETIME,
+    contents TEXT,
+    FOREIGN KEY (recipient_id) REFERENCES users(id),  
+    FOREIGN KEY (sender_id) REFERENCES users(id)
+);
