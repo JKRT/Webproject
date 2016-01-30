@@ -1,0 +1,99 @@
+INSERT INTO users VALUES ( 
+NULL,
+"rickard",
+"johansson",
+"ricjo0@example.com",
+"Smurftown",
+"Hamham",
+"82c812",
+"hen" );
+
+
+INSERT INTO users VALUES ( 
+NULL,
+"anders",
+"svensson",
+"andsv0@example.com",
+"Smurftown",
+"Oxtown",
+"d37e7c",
+"hen" );
+
+
+INSERT INTO users VALUES ( 
+NULL,
+"sara",
+"jansson",
+"sarja0@example.com",
+"Hamham",
+"Smurftown",
+"7bec6f",
+"hen" );
+
+
+INSERT INTO users VALUES ( 
+NULL,
+"elisabeth",
+"andersson",
+"elian0@example.com",
+"Smallville",
+"Smallville",
+"f8907e",
+"hen" );
+
+
+INSERT INTO users VALUES ( 
+NULL,
+"klas-conny",
+"connysson",
+"klaco0@example.com",
+"Smurftown",
+"Hamham",
+"79889f",
+"hen" );
+
+
+INSERT INTO users VALUES ( 
+NULL,
+"maria",
+"andersson",
+"maran0@example.com",
+"Mercedes",
+"Smallville",
+"45cd3e",
+"hen" );
+
+
+INSERT INTO users VALUES ( 
+NULL,
+"magdalena",
+"nilsson",
+"magni0@example.com",
+"Smurftown",
+"Smurftown",
+"5b03d5",
+"hen" );
+
+
+INSERT INTO users VALUES ( 
+NULL,
+"julia",
+"heneriksson",
+"julhe0@example.com",
+"Smallville",
+"Hamham",
+"167a0f",
+"hen" );
+
+
+INSERT INTO users VALUES ( 
+NULL,
+"werner",
+"gustavsson",
+"wergu0@example.com",
+"Smurftown",
+"Smurftown",
+"801b3a",
+"hen" );
+
+
