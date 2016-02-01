@@ -82,3 +82,5 @@ tramp
 
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
+#Python related 
+*.pyc
