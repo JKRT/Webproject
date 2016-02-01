@@ -1,48 +1,26 @@
 from flask import *
-import uuid
+
 import json
 import database_helper
 
 app = Flask(__name__)
 
-@app.route('/')
-def hello_world():
-    return 'Hello World! hello'
-
-@app.route('/user/<username>')
-def show_user_profile(username):
-    # show the user profile for that user
-    return 'User %s' % username
-
-@app.errorhandler(404)
-def page_not_found(error):
-    return render_template('Det smoeg sig visst in ett litet fel sorry kompis'), 404
-
-@app.route('/get', methods=['POST', 'GET'])
-def get_niklas():
-    if request.method == "GET":
-        return "Hej kompis"
+@app.route('/sign_in', methods=['POST'])
+def sign_in(username = None , password = None):
+    username = request.form['email1'] 
+    password = request.form['password1'] 
+    if username == None or password == None: 
+        return json.dumps({"success": False, "message": "Wrong username or password."})
+    return database_helper.sign_in(username, password)
 
 
-@app.route('/login', methods=['POST'])
-def sign_in():
-    if database_helper.sign_in(request.form['email1'],
-                   request.form['password1']):
-        return json.dumps({"success": True,
-                           "message": "Successfully signed in.",
-                           "data": generate_token()})
-    else:
-        return json.dumps({"success": False,
-                           "message": "Wrong username or password."})
-
-
-
-
-
-def generate_token():
-    return str(uuid.uuid4()).replace('-', '')
+@app.route('/sign_out', methods=['POST'])
+def sign_out(token = None):
+    token = request.form['token'] 
+    if token == None: 
+        return json.dumps({"success": False, "message": "You are not signed in."})
+    return database_helper.sign_out(token)
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-    database_helper.close()

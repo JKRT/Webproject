@@ -8,7 +8,7 @@ NULL,
 "London",
 "England",
 "bashlover",
-"Male");
+"Male", NULL);
 
 INSERT INTO users VALUES ( 
 NULL , 
@@ -18,7 +18,7 @@ NULL ,
 "London",
 "England",
 "kebabpizzza",
-"Male");
+"Male", NULL);
 
 INSERT INTO users VALUES ( 
 NULL, 
@@ -28,7 +28,7 @@ NULL,
 "Dublin",
 "Ireland",
 "vaniljsirap",
-"Male");
+"Male", NULL);
 
 INSERT INTO messages VALUES (
 NULL,

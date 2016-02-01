@@ -9,7 +9,8 @@ CREATE TABLE users(
     city TEXT,
     country TEXT,
     password TEXT,
-    gender TEXT
+    gender TEXT,
+    token TEXT
 );
 
 DROP TABLE IF EXISTS messages;
