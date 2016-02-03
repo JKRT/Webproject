@@ -23,3 +23,11 @@ CREATE TABLE messages(
     FOREIGN KEY (recipient_id) REFERENCES users(id),  
     FOREIGN KEY (sender_id) REFERENCES users(id)
 );
+
+DROP TABLE IF EXISTS tokens; 
+CREATE TABLE tokens (
+       id TEXT PRIMERY KEY, 
+       user INTEGER,
+       creation_date DATETIME,
+       FOREIGN KEY (user) REFERENCES users(id),
+);
