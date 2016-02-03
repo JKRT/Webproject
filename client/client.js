@@ -1,15 +1,16 @@
+/*
+  Displaying the current view, the default is the home view but the value 
+   of this function will change in the show* functions */
 currentView = showHome;
  
 displayView = function() {
     console.log("Display view called");
     if(sessionStorage.token)  {
         document.getElementById("content").innerHTML = document.getElementById("profileView").text;
-        //showHome();
 	currentView();
     } else {
         console.log("trying to fetch welcome view");
         document.getElementById("content").innerHTML = document.getElementById("welcomeView").text;
-        // addCustomValidation();
     }
 };
 
