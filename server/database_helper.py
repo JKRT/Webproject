@@ -3,6 +3,7 @@
 import sqlite3
 import json
 import uuid
+from time import localtime, strftime
 
 def sign_in(email, password):
     connection = sqlite3.connect("database.db")
@@ -133,15 +134,30 @@ def get_user_messages_by_email(token,email):
 
 
 
-def post_message(token, message mail):
+def post_message(token, message, email):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT first_name FROM users WHERE token =? " , (token,))
 
     if cursor.fetchone() == None:
+        connection.close()
         return json.dumps( {"success": False, "message": "You are not signed in."})
+        
 
-
+    try:
+        cursor.execute("SELECT id FROM users WHERE token=? ", (token,))
+        sender_id = cursor.fetchone()[0]
+        cursor.execute("SELECT id from users WHERE email=? " , (email,))
+        recipient_id = cursor.fetchone()[0]
+    except:
+        connection.close()
+        return json.dumps( {"success": False, "message": "No such user."})
+        
+    cursor.execute("INSERT INTO messages VALUES(NULL, ?, ?, ?, ?)", 
+                   (sender_id,recipient_id,strftime("%Y-%m-%d %H:%M:%S", localtime()), message))
+    connection.commit()
+    connection.close()                
+    return json.dumps({"success": True, "message": "Message posted"})            
 
 def generate_token():
     return str(uuid.uuid4()).replace('-', '')

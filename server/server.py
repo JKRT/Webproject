@@ -76,6 +76,9 @@ def post_message(token = None,message = None ,email = None):
 
     if token == None or message == None or email == None:  
         return json.dumps({"success": False, "message": "You are not signed in."})
+    else:
+        return database_helper.post_message(token, message, email)
+        
 
 if __name__ == '__main__':
     app.run(debug=True)
