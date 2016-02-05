@@ -3,16 +3,27 @@
 import sqlite3
 import json
 import uuid
+import hashlib
 from time import localtime, strftime
+
+def generate_hash(password):
+    return hashlib.sha256(password).hexdigest()
+
+def get_user_id(cursor, token):
+    cursor.execute("SELECT user_id FROM tokens WHERE id=?", (token,))
+    try:
+        a =  cursor.fetchone()[0]
+        return a
+    except: 
+        return None
 
 def sign_in(email, password):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
-
+    cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email, generate_hash(password)))
     if cursor.fetchone() != None:
         token = generate_token()
-        cursor.execute("UPDATE users SET token=? WHERE email=? AND password=?", (token, email, password))
+        cursor.execute("INSERT INTO tokens VALUES(?, (SELECT id FROM users WHERE email=?))", (token, email))
         connection.commit()
         connection.close()
         return  json.dumps({"success": True,
@@ -22,13 +33,32 @@ def sign_in(email, password):
         return json.dumps({"success": False,
                            "message": "Wrong username or password."})
 
+def sign_up(email, password, first_name, 
+            family_name, gender, city, country):
+    connection = sqlite3.connect("database.db")
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM users WHERE email=?", (email,))
+    if cursor.fetchone() != None:
+        connection.close()
+        return  json.dumps({"success": False,
+                            "message": "User already exists."})
+    cursor.execute("INSERT INTO users VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)",
+                   (first_name, family_name, email, city, country, generate_hash(password), gender))
+    connection.commit()
+    connection.close();
+    return  json.dumps({"success": True,
+                        "message": "Ha en bra dag kompis!"})
+
+
 def sign_out(token):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE token=?", (token,))
+    cursor.execute("SELECT * FROM tokens WHERE id=?", (token,))
   
     if cursor.fetchone() != None:
-        cursor.execute("UPDATE users SET token=NULL WHERE token=?", (token,))
+        #TODO!!!!!! Remove a token from the user
+        connection.execute("DELETE FROM tokens WHERE id=?", (token,))
         connection.commit()
         connection.close()
         return  json.dumps({"success": True,
@@ -42,15 +72,16 @@ def sign_out(token):
 def change_password(token,old_password,new_password):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE token=?", (token,))
-
+    cursor.execute("SELECT * FROM tokens WHERE id=?", (token,))
+   
     if cursor.fetchone() == None:
         return json.dumps({"success": False, "message": "You are not logged in."})
         
     else:
-        cursor.execute("SELECT password FROM users WHERE token=? AND password=?", (token,old_password))
+        user_id = get_user_id(cursor, token)
+        cursor.execute("SELECT * FROM users WHERE id=? AND password=?", (user_id, generate_hash(old_password)))
         if cursor.fetchone() != None:
-            cursor.execute("UPDATE users SET password=? WHERE token=?", (new_password,token))
+            cursor.execute("UPDATE users SET password=? WHERE id=?", (generate_hash(new_password), user_id))
             connection.commit()
             connection.close()
             return json.dumps( {"success": True, "message": "Password changed."} )
@@ -62,10 +93,11 @@ def change_password(token,old_password,new_password):
 def get_user_data_by_token(token):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT first_name,family_name,email,city,country,gender FROM users WHERE token=?", (token,))
+    user_id = get_user_id(cursor,token)
+    cursor.execute("SELECT first_name,family_name,email,city,country,gender FROM users WHERE id=?", (user_id,))
     cursorObject = cursor.fetchone()
     
-    if cursorObject  == None:
+    if cursorObject == None:
         connection.close()
         return json.dumps( {"success": False, "message": "You are not signed in."})
     else:
@@ -77,8 +109,9 @@ def get_user_data_by_token(token):
 def get_user_data_by_email(token,email):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT first_name FROM users WHERE token=?",(token,))
-    
+    user_id = get_user_id(cursor,token)
+    cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
+
     if cursor.fetchone() == None:
         connection.close()
         return json.dumps( {"success": False, "message": "You are not signed in."})
@@ -99,13 +132,16 @@ def get_user_data_by_email(token,email):
 def get_user_messages_by_token(token):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE token=?", (token,))
+    user_id = get_user_id(cursor,token)
+    cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
+
     if cursor.fetchone() == None:
         connection.close()
         return json.dumps({"success": False, "message": "You are not logged in."})
 
     messages = []
-    for row in cursor.execute("SELECT contents FROM messages WHERE recipient_id=(SELECT id FROM users where token =? ) ORDER BY sent_date ASC" , (token, ) ):
+    for row in cursor.execute("SELECT contents FROM messages WHERE recipient_id=? ORDER BY sent_date ASC",
+                             (user_id, ) ):
         messages.append(row[0])
     connection.close()
     return json.dumps({"success": True, "message": "User data retrieved.", "data": messages})
@@ -114,14 +150,14 @@ def get_user_messages_by_token(token):
 def get_user_messages_by_email(token,email):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT first_name FROM users WHERE token=?",(token,))
+    user_id = get_user_id(cursor,token)
+    cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
     
     if cursor.fetchone() == None:
         connection.close()
         return json.dumps( {"success": False, "message": "You are not signed in."})
         
     cursor.execute("SELECT first_name FROM users WHERE email=?",(email,))
-    
     if cursor.fetchone() == None:
         connection.close()
         return json.dumps( {"success": False, "message": "No such user."})
@@ -137,7 +173,8 @@ def get_user_messages_by_email(token,email):
 def post_message(token, message, email):
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT first_name FROM users WHERE token =? " , (token,))
+    user_id = get_user_id(cursor,token)
+    cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
 
     if cursor.fetchone() == None:
         connection.close()
@@ -145,8 +182,7 @@ def post_message(token, message, email):
         
 
     try:
-        cursor.execute("SELECT id FROM users WHERE token=? ", (token,))
-        sender_id = cursor.fetchone()[0]
+        sender_id = user_id;
         cursor.execute("SELECT id from users WHERE email=? " , (email,))
         recipient_id = cursor.fetchone()[0]
     except:

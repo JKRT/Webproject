@@ -19,7 +19,6 @@ for data in inputList:
     print addQuotes(data_list[3]) + ","
     print addQuotes(data_list[4]) + ","
     print addQuotes(data_list[5]) + ","
-    print addQuotes(data_list[6]) + "," 
-    print "NULL );"
+    print addQuotes(data_list[6]) + ");" 
     print "\n" 
 

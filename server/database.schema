@@ -9,8 +9,7 @@ CREATE TABLE users(
     city TEXT,
     country TEXT,
     password TEXT,
-    gender TEXT,
-    token TEXT
+    gender TEXT
 );
 
 DROP TABLE IF EXISTS messages;
@@ -27,7 +26,6 @@ CREATE TABLE messages(
 DROP TABLE IF EXISTS tokens; 
 CREATE TABLE tokens (
        id TEXT PRIMERY KEY, 
-       user INTEGER,
-       creation_date DATETIME,
-       FOREIGN KEY (user) REFERENCES users(id),
+       user_id INTEGER,
+       FOREIGN KEY (user_id) REFERENCES users(id)
 );

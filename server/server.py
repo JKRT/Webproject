@@ -7,12 +7,29 @@ app = Flask(__name__)
 
 @app.route('/sign_in', methods=['POST'])
 def sign_in(username = None , password = None):
-    username = request.form['email1'] 
-    password = request.form['password1'] 
+    username = request.form['email'] 
+    password = request.form['password'] 
     if username == None or password == None: 
         return json.dumps({"success": False, "message": "Wrong username or password."})
     return database_helper.sign_in(username, password)
 
+@app.route('/sign_up', methods = ['POST'])
+def sign_up( email = None, password = None, first_name = None , 
+             family_name = None, gender = None, city = None ,country = None ):
+
+    input_dict = { "email": request.form['email'] , "password": request.form['password'],
+                   "first_name": request.form['first_name'] , "family_name": request.form['family_name'] ,
+                   "gender": request.form['gender'] , "country": request.form['country'] ,
+                   "city": request.form['city']}
+    
+    #dont worry be happy
+    for key,value in input_dict.items():
+        if  input_dict[key] is None or input_dict[key] == "":
+            return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
+            
+    return database_helper.sign_up(input_dict["email"],input_dict["password"] , input_dict["first_name"] 
+                                   , input_dict["family_name"] , input_dict["gender"] 
+                                   , input_dict["city"] , input_dict["country"])
 
 @app.route('/sign_out', methods=['POST'])
 def sign_out(token = None):
