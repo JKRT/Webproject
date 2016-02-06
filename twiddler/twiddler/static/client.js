@@ -57,16 +57,28 @@ function checkLogin() {
     console.log("Called checkLogin()");
     var email = document.getElementById("email1").value;
     var password = document.getElementById("password1").value;
-    var signInObject = serverstub.signIn(email,password);
 
-    if(!signInObject.success) {
-        var email1 = document.getElementById("email1");
-        email1.setCustomValidity("User doesn't exist!");
-    } else {
-        //Save the token in the browser...
-        sessionStorage.token = signInObject.data;
-        displayView();
-    }
+    var xhttp = new XMLHttpRequest();
+    var signInObject = null; 
+    xhttp.open("POST", "/sign_in", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("email=" + email +
+               "&password=" + password);
+
+    xhttp.onreadystatechange = function() {
+        // Waiting for request to finish, 4 when response is ready.
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            signInObject = JSON.parse(xhttp.responseText);
+	    if(!signInObject.success) {
+		var email1 = document.getElementById("email1");
+		email1.setCustomValidity("User doesn't exist!");
+	    } else {
+		//Save the token in the browser...
+		sessionStorage.token = signInObject.data;
+		displayView();
+	    }
+        }
+    };
 
     return false;
 }
