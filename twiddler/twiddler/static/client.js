@@ -149,7 +149,8 @@ function initHome(userData) {
             var chatLog = "";
             for (var message of messageData.data) {
                 chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
-            }
+	    }
+	    console.log(chatLog);
             document.getElementById("chatPanel").innerHTML = chatLog;
         }
     };
@@ -234,24 +235,31 @@ function logout() {
 
 function reloadMessages () {
     //Observe that the context can only be in browser or home panel mode
+    console.log("Current view called");
     currentView();
 }
 /* Handles message posting , if browse is activated we will fetch the email corresponding to
 * to the users that we are currently viewing. */
 function postMessage() {
     console.log("postMessage() called");
+    var recipient = null;
     if(currentView === showBrowse ) {
-        var recipient = document.getElementById("email3").value;
-	var messageContent = document.getElementById("chatBox");
+        recipient = document.getElementById("email3").value;
+    } else if (currentView === showHome) {
+	//set recipient to the user "hack"..
+	recipient = document.getElementById("homeEmail").innerHTML;
+	recipient = recipient.split(">");
+	recipient = recipient[recipient.length - 1];
     }
-
+    console.log("With recipiant:" + recipient);
+    var messageContent = document.getElementById("chatBox");
     xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/post_message", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send("token=" + sessionStorage.token + "&message=" 
 	       + messageContent.value + "&email=" + recipient ); 
 
     xhttp.onreadystatechange = function() {
-        // Waiting for request to finish, 4 when response is ready.
 	if (xhttp.readyState == 4 && xhttp.status == 200) {
 	    messageContent.value = "";
 	    reloadMessages();
@@ -262,11 +270,20 @@ function postMessage() {
 
 function changePassword() {
     console.log("Called changePassword()");
-    if(serverstub.changePassword(sessionStorage.token,
-            document.getElementById("oldPassword").value,
-            document.getElementById("newPassword").value).success) {
-        document.getElementById("changePasswordForm").reset();
-    }
+    xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "/change_password", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("oldPassword=" + document.getElementById("oldPassword").value  + "&newPassword=" 
+	       +  document.getElementById("newPassword").value + "&token=" + sessionStorage.token ); 
+    
+    xhttp.onreadystatechange = function() {
+	if (xhttp.readyState == 4 && xhttp.status == 200) {
+	    messageData = JSON.parse(xhttp.responseText);
+	    if (messageData.success) {
+		document.getElementById("changePasswordForm").reset();
+	    }
+	}
+    };
     return false;
 }
 

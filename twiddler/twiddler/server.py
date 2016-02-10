@@ -93,12 +93,13 @@ def post_message(token = None,message = None ,email = None):
     token = request.form['token']
     message = request.form['message']
     email = request.form['email']
-
+    print token + ':' + message + ':' + email
     if token == None or message == None or email == None:  
         return json.dumps({"success": False, "message": "You are not signed in."})
     else:
-        return database_helper.post_message(token, message, email)
-        
+        a = database_helper.post_message(token, message, email)
+        print a
+        return a
 
 if __name__ == '__main__':
     app.run(debug=True)

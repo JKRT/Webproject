@@ -165,6 +165,8 @@ def get_user_messages_by_email(token,email):
     messages = []
     for row in cursor.execute("SELECT contents FROM messages WHERE recipient_id=(SELECT id FROM users WHERE email=? ) ORDER BY sent_date ASC" , (email, ) ):
         messages.append(row[0])
+    
+    # Reason for undefined messages lies here. 
     connection.close()
     return json.dumps({"success": True, "message": "User data retrieved.", "data": messages})
 
@@ -179,8 +181,6 @@ def post_message(token, message, email):
     if cursor.fetchone() == None:
         connection.close()
         return json.dumps( {"success": False, "message": "You are not signed in."})
-        
-
     try:
         sender_id = user_id;
         cursor.execute("SELECT id from users WHERE email=? " , (email,))
