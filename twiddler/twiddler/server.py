@@ -54,17 +54,17 @@ def change_password(token = None, old_password=None ,new_password=None):
     else:
         return database_helper.change_password(token,old_password, new_password)
 
-@app.route('/get_user_data_by_token' , methods=['POST'])
+@app.route('/get_user_data_by_token' , methods=['GET'])
 def get_user_data_by_token(token = None):
-    token = request.form['token']
+    token = request.args.get('token', '');
     if token == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
     return database_helper.get_user_data_by_token(token)
 
-@app.route('/get_user_data_by_email', methods=['POST'])
+@app.route('/get_user_data_by_email', methods=['GET'])
 def get_user_data_by_email(token = None , email = None):
-    token = request.form['token']
-    email = request.form['email']
+    token = request.args.get('token', '');
+    email = request.args.get('email', '');
 
     if token == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
@@ -79,10 +79,10 @@ def get_user_messages_by_token(token = None):
         return json.dumps({"success": False, "message": "You are not signed in."})
     return database_helper.get_user_messages_by_token(token)
 
-@app.route('/get_user_messages_by_email' , methods=['POST'])
+@app.route('/get_user_messages_by_email' , methods=['GET'])
 def get_user_messages_by_email(token = None, email = None): 
-    token = request.form['token']
-    email = request.form['email']
+    token = request.args.get('token', '');
+    email = request.args.get('email', '');
 
     if token == None or email == None:
         return json.dumps({"success": False, "message": "You are not signed in."})

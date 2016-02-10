@@ -7,7 +7,7 @@ displayView = function() {
     console.log("Display view called");
     if(sessionStorage.token)  {
         document.getElementById("content").innerHTML = document.getElementById("profileView").text;
-	currentView();
+        currentView();
     } else {
         console.log("trying to fetch welcome view");
         document.getElementById("content").innerHTML = document.getElementById("welcomeView").text;
@@ -32,14 +32,32 @@ function checkSignUp() {
 			  gender: document.getElementById("gender").value,
 			  city: document.getElementById("city").value,
 			  country: document.getElementById("country").value};
-        var signUpObject = serverstub.signUp(dataObject);
+        var signUpObject = null; // serverstub.signUp(dataObject);
 
-        if (signUpObject.success) {
-            document.getElementById("signUpForm").reset();
-        } else {
-            var email2 = document.getElementById("email2");
-            email2.setCustomValidity("User already exists!");
-        }
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "/sign_up", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("email=" + dataObject.email +
+                "&first_name=" + dataObject.firstname +
+                "&family_name=" + dataObject.familyname +
+                "&gender=" + dataObject.gender +
+                "&country=" + dataObject.country +
+                "&city=" + dataObject.city +
+                "&password=" + dataObject.password);
+
+        xhttp.onreadystatechange = function() {
+            // Waiting for request to finish, 4 when response is ready.
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                signUpObject = JSON.parse(xhttp.responseText);
+                if(!signUpObject.success) {
+                    var email2 = document.getElementById("email2");
+                    email2.setCustomValidity("User already exists!");
+                } else {
+                    //Save the token in the browser...
+                    document.getElementById("signUpForm").reset();
+                }
+            }
+        };
     }
 
     return false;
@@ -69,14 +87,14 @@ function checkLogin() {
         // Waiting for request to finish, 4 when response is ready.
         if (xhttp.readyState == 4 && xhttp.status == 200) {
             signInObject = JSON.parse(xhttp.responseText);
-	    if(!signInObject.success) {
-		var email1 = document.getElementById("email1");
-		email1.setCustomValidity("User doesn't exist!");
-	    } else {
-		//Save the token in the browser...
-		sessionStorage.token = signInObject.data;
-		displayView();
-	    }
+            if(!signInObject.success) {
+                var email1 = document.getElementById("email1");
+                email1.setCustomValidity("User doesn't exist!");
+            } else {
+                //Save the token in the browser...
+                sessionStorage.token = signInObject.data;
+                displayView();
+            }
         }
     };
 
@@ -92,8 +110,20 @@ function showHome() {
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
 
-    var userData = serverstub.getUserDataByToken(sessionStorage.token);
-    initHome(userData);
+    var userData = null;
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "/get_user_data_by_token?t=" + Math.random() + "&token=" + sessionStorage.token, true);
+    xhttp.send(); // Data is provided in the actual URL (since we are doing a GET request).
+    // Reasoning to add 't' in the url with a random value is that the brower might cache the page,
+    // which is unreasonable since the provided data is dynamic and can't really be cached.
+
+    xhttp.onreadystatechange = function() {
+        // Waiting for request to finish, 4 when response is ready.
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            userData = JSON.parse(xhttp.responseText);
+            initHome(userData);
+        }
+    };
 }
 
 
@@ -109,13 +139,27 @@ function initHome(userData) {
     writeToHome("homeCity" , userData.data.city, "City: ");
     writeToHome("homeCountry" ,  userData.data.country, "Country: ");
 
-    var chatLog = "";
-    for (var message of serverstub.getUserMessagesByEmail(sessionStorage.token,userData.data.email).data) {
-        chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
-    }
 
-    document.getElementById("chatPanel").innerHTML = chatLog;
+    var messageData = null;
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "/get_user_messages_by_email?t=" + Math.random() +
+                      "&token=" + sessionStorage.token +
+                      "&email=" + userData.data.email, true);
+    xhttp.send(); // Data is provided in the actual URL (since we are doing a GET request).
+    // Reasoning to add 't' in the url with a random value is that the brower might cache the page,
+    // which is unreasonable since the provided data is dynamic and can't really be cached.
 
+    xhttp.onreadystatechange = function() {
+        // Waiting for request to finish, 4 when response is ready.
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            messageData = JSON.parse(xhttp.responseText);
+            var chatLog = "";
+            for (var message of messageData.data) {
+                chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
+            }
+            document.getElementById("chatPanel").innerHTML = chatLog;
+        }
+    };
 }
 
 
@@ -140,8 +184,7 @@ function showBrowse() {
     document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "block"
-   // initHome(userData);
-   browseUsers();
+    browseUsers();
 }
 
 function browseUsers(){
@@ -151,9 +194,25 @@ function browseUsers(){
     if(email === ""){
         return false;
     }
-    
-    userData =  serverstub.getUserDataByEmail(sessionStorage.token,email);
-    initHome(userData);
+
+
+    var userData = null;
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "/get_user_data_by_email?t=" + Math.random() +
+               "&token=" + sessionStorage.token +
+               "&email=" + email, true);
+    xhttp.send(); // Data is provided in the actual URL (since we are doing a GET request).
+    // Reasoning to add 't' in the url with a random value is that the brower might cache the page,
+    // which is unreasonable since the provided data is dynamic and can't really be cached.
+
+    xhttp.onreadystatechange = function() {
+        // Waiting for request to finish, 4 when response is ready.
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            userData = JSON.parse(xhttp.responseText);
+            initHome(userData);
+        }
+    };
+
     return false;
 }
 function logout() {
