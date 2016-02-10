@@ -14,11 +14,6 @@ displayView = function() {
     }
 };
 
-function resetSignUpValidation() {
-    var email2 = document.getElementById("email2");
-    email2.setCustomValidity("");
-}
-
 /*
  *  Checks the the password for the signup form is correct. 
  */
@@ -63,14 +58,12 @@ function checkSignUp() {
     return false;
 }
 
-function resetLoginValidation() {
-    var email1 = document.getElementById("email1");
-    email1.setCustomValidity("");
+function resetValidation (fieldName) {
+    console.log("resetValidation() called");
+    var field = document.getElementById(fieldName);
+    field.setCustomValidity("");    
 }
 
-/*
- *  
- */
 function checkLogin() {
     console.log("Called checkLogin()");
     var email = document.getElementById("email1").value;
@@ -190,26 +183,33 @@ function showBrowse() {
 function browseUsers(){
     console.log("Browse called");
     var email = document.getElementById("email3").value;
+    var userData = null;
+    var xhttp = new XMLHttpRequest();
 
     if(email === ""){
         return false;
     }
 
-
-    var userData = null;
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "/get_user_data_by_email?t=" + Math.random() +
+    /* Data is provided in the actual URL (since we are doing a GET request).
+     *   Reasoning to add 't' in the url with a random value is that the brower might cache the page,
+     *    which is unreasonable since the provided data is dynamic and can't really be cached.
+     */
+    xhttp.open("GET", "/get_user_data_by_email?t=" + 
+	       Math.random() +
                "&token=" + sessionStorage.token +
                "&email=" + email, true);
-    xhttp.send(); // Data is provided in the actual URL (since we are doing a GET request).
-    // Reasoning to add 't' in the url with a random value is that the brower might cache the page,
-    // which is unreasonable since the provided data is dynamic and can't really be cached.
+    xhttp.send(); 
 
     xhttp.onreadystatechange = function() {
         // Waiting for request to finish, 4 when response is ready.
         if (xhttp.readyState == 4 && xhttp.status == 200) {
             userData = JSON.parse(xhttp.responseText);
-            initHome(userData);
+	    if(!userData.success){
+		var email3 = document.getElementById("email3");
+                email3.setCustomValidity("User doesn't exist!");
+	    } else {		
+		initHome(userData);
+	    }
         }
     };
 
@@ -217,10 +217,20 @@ function browseUsers(){
 }
 function logout() {
     console.log("logout() called");
-    serverstub.signOut(sessionStorage.token);
-    sessionStorage.removeItem("token");
-    displayView();
-}
+    xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "/sign_out", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("token=" + sessionStorage.token); 
+
+    xhttp.onreadystatechange = function() {
+        // Waiting for request to finish, 4 when response is ready.
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+	    sessionStorage.removeItem("token");
+	    displayView();
+	}
+    };
+} 
+
 
 function reloadMessages () {
     //Observe that the context can only be in browser or home panel mode
@@ -230,13 +240,24 @@ function reloadMessages () {
 * to the users that we are currently viewing. */
 function postMessage() {
     console.log("postMessage() called");
-    if(currentView === showBrowse )
+    if(currentView === showBrowse ) {
         var recipient = document.getElementById("email3").value;
+	var messageContent = document.getElementById("chatBox");
+    }
 
-    var messageContent = document.getElementById("chatBox");
-    serverstub.postMessage(sessionStorage.token, messageContent.value, recipient);
-    messageContent.value = "";
-    reloadMessages();
+    xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "/post_message", true);
+    xhttp.send("token=" + sessionStorage.token + "&message=" 
+	       + messageContent.value + "&email=" + recipient ); 
+
+    xhttp.onreadystatechange = function() {
+        // Waiting for request to finish, 4 when response is ready.
+	if (xhttp.readyState == 4 && xhttp.status == 200) {
+	    messageContent.value = "";
+	    reloadMessages();
+	}
+    };
+
 }
 
 function changePassword() {

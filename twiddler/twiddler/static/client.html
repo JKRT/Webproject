@@ -28,7 +28,7 @@
 		</div>
 
 		<div class="inputWrapper">
-		  <input class="formSubmit rightAlign" onclick="resetLoginValidation();" type="submit" value="sign in" required>
+		  <input class="formSubmit rightAlign" onclick="resetValidation('email1');" type="submit" value="sign in" required>
 		</div>
 	      </form>
 	    </div>
@@ -81,7 +81,7 @@
 
 		<div class="inputWrapper">
 		  <span class="formText leftAlign"></span>
-		  <input class="formSubmit rightAlign" type="submit" onclick="resetSignUpValidation()" value="sign up" id="signUp" required>
+		  <input class="formSubmit rightAlign" type="submit" onclick="resetValidation('email2')" value="sign up" id="signUp" required>
 		</div>
 	      </form>
 	    </div>
@@ -146,8 +146,8 @@
 	    </div>
 
 	    <div id="browsePanel" class="panel"  >
-              <form id="browseUsersForm" method="post" onsubmit="return browseUsers();">
-		<input class="formButton rightAlign" type="submit" value="browse" id="browse">
+              <form id="browseUsersForm" method="post" onsubmit="return browseUsers();" >
+		<input class="formButton rightAlign" type="submit" value="browse" id="browse" onclick="resetValidation('email3');">
 		  <input class="formInput leftAlign" style="width: 88%" type="email" id="email3" required>
               </form>
             </div>
