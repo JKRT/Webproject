@@ -1,4 +1,4 @@
-#Function to access and control the database , used by server to access the database
+7#Function to access and control the database , used by server to access the database
 
 import sqlite3
 import json
@@ -140,9 +140,10 @@ def get_user_messages_by_token(token):
         return json.dumps({"success": False, "message": "You are not logged in."})
 
     messages = []
-    for row in cursor.execute("SELECT contents FROM messages WHERE recipient_id=? ORDER BY sent_date ASC",
+    for row in cursor.execute("SELECT sender_id, contents FROM messages WHERE recipient_id=? ORDER BY sent_date ASC",
                              (user_id, ) ):
-        messages.append(row[0])
+        sender_email = cursor.execute("SELECT email FROM users WHERE id=?", (row[0],)).fetchone()
+        messages.append({"writer": sender_email[0], "content": row[1]})
     connection.close()
     return json.dumps({"success": True, "message": "User data retrieved.", "data": messages})
 
@@ -151,21 +152,29 @@ def get_user_messages_by_email(token,email):
     connection = sqlite3.connect("twiddler/database.db")
     cursor = connection.cursor()
     user_id = get_user_id(cursor,token)
+    recipient_id = None
+    try:
+        cursor.execute("SELECT id from users WHERE email=? " , (email,))
+        recipient_id = cursor.fetchone()[0]
+    except:
+        print "Exception caught"
+        connection.close()
+
     cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
-    
     if cursor.fetchone() == None:
         connection.close()
         return json.dumps( {"success": False, "message": "You are not signed in."})
-        
+
     cursor.execute("SELECT first_name FROM users WHERE email=?",(email,))
     if cursor.fetchone() == None:
         connection.close()
         return json.dumps( {"success": False, "message": "No such user."})
 
     messages = []
-    for row in cursor.execute("SELECT contents FROM messages WHERE recipient_id=(SELECT id FROM users WHERE email=? ) ORDER BY sent_date ASC" , (email, ) ):
-        messages.append(row[0])
-    
+    message_cursor = cursor.execute("SELECT users.email, messages.contents FROM messages INNER JOIN users ON users.id=messages.sender_id AND messages.recipient_id=? ORDER BY messages.sent_date ASC", (recipient_id,)).fetchall()
+    for row in message_cursor:
+        messages.append({"writer": row[0], "content": row[1]})
+
     # Reason for undefined messages lies here. 
     connection.close()
     return json.dumps({"success": True, "message": "User data retrieved.", "data": messages})
