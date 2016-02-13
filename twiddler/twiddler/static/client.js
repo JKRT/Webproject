@@ -2,6 +2,7 @@
   Displaying the current view, the default is the home view but the value 
    of this function will change in the show* functions */
 currentView = showHome;
+currentlyViewing = "";
  
 displayView = function() {
     console.log("Display view called");
@@ -170,7 +171,7 @@ function showAccount() {
 /* 
 * Fetches the data from the home panel and show it on the home tab.
 */
-function showBrowse() {
+function showBrowse(reload) {
     console.log("Called showBrowse()");
     currentView = showBrowse;
     document.getElementById("homePanel").style.display = "block";
@@ -178,17 +179,19 @@ function showBrowse() {
     document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "block"
-    browseUsers();
+    browseUsers(reload);
 }
 
-function browseUsers(){
+function browseUsers(reload){
     console.log("Browse called");
-    var email = document.getElementById("email3").value;
+    var email = null;
+    if (reload) email = currentlyViewing;
+    else email = document.getElementById("email3").value;
     var userData = null;
     var xhttp = new XMLHttpRequest();
 
-    if(email === ""){
-        return false;
+    if(email === "") {
+	return false;
     }
 
     /* Data is provided in the actual URL (since we are doing a GET request).
@@ -208,7 +211,8 @@ function browseUsers(){
 	    if(!userData.success){
 		var email3 = document.getElementById("email3");
                 email3.setCustomValidity("User doesn't exist!");
-	    } else {		
+	    } else {
+		currentlyViewing = document.getElementById("email3").value;
 		initHome(userData);
 	    }
         }
@@ -216,6 +220,7 @@ function browseUsers(){
 
     return false;
 }
+
 function logout() {
     console.log("logout() called");
     xhttp = new XMLHttpRequest();
@@ -232,11 +237,10 @@ function logout() {
     };
 } 
 
-
-function reloadMessages () {
-    //Observe that the context can only be in browser or home panel mode
+/* Observe that the context can only be in browser or home panel mode */
+function reloadMessages () { 
     console.log("Current view called");
-    currentView();
+    currentView(true);
 }
 /* Handles message posting , if browse is activated we will fetch the email corresponding to
 * to the users that we are currently viewing. */
@@ -244,7 +248,9 @@ function postMessage() {
     console.log("postMessage() called");
     var recipient = null;
     if(currentView === showBrowse ) {
-        recipient = document.getElementById("email3").value;
+        // recipient = document.getElementById("email3").value;
+	recipient = currentlyViewing;
+	console.log(recipient);
     } else if (currentView === showHome) {
 	//set recipient to the user "hack"..
 	recipient = document.getElementById("homeEmail").innerHTML;
