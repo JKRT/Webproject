@@ -4,22 +4,24 @@ from twiddler import app
 import json
 import database_helper
 
+class AutoLogin:
+    @app.route('/example')
+    def example():
+        print "Enter example"
+        if request.environ.get('wsgi.websocket'):
+            print "if 1"
+            ws = request.environ['wsgi.websocket']
+            print ws
+            while True:
+                message = ws.receive()
+                print "while"
+                ws.send(message)
+                return
+
+
 @app.route('/', methods=['GET'])
 def index():
     return app.send_static_file('client.html')
-
-@app.route('/example')
-def example():
-    print "Enter example"
-    if request.environ.get('wsgi.websocket'):
-        print "if 1"
-        ws = request.environ['wsgi.websocket']
-        print ws
-        while True:
-            message = ws.receive()
-            print "while"
-            ws.send(message)
-    return
 
 @app.route('/sign_in', methods=['POST'])
 def sign_in(username = None , password = None):

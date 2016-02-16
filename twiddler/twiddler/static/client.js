@@ -178,7 +178,7 @@ function showBrowse(reload) {
     document.getElementById("chatPanel").style.display = "block";
     document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
-    document.getElementById("browsePanel").style.display = "block"
+    document.getElementById("browsePanel").style.display = "block";
     browseUsers(reload);
 }
 
@@ -291,20 +291,20 @@ function changePassword() {
 	}
     };
     return false;
-}
+} 
+
+ socketHandler = function() {
+	exampleSocket = new WebSocket("ws://localhost:7777/example");
+	exampleSocket.onmessage = function (event) {
+	    console.log(event.data);
+	    //exampleSocket.send("Here's some text that the server is urgently awaiting!");  
+	};
+	exampleSocket.onopen = function (event) {
+	    exampleSocket.send("Here's some text that the server is urgently awaiting!");   	
+	};
+    };
 
 window.onload = function() {
     displayView();
-
-    /*Just an example remove later */
-    exampleSocket = new WebSocket("ws://localhost:5000/example"); 
-    exampleSocket.onopen = function (event) {
-	exampleSocket.send("Here's some text that the server is urgently awaiting!");   
-    };
-
-    exampleSocket.onmessage = function (event) {
-	console.log(event.data);
-    };
-    exampleSocket.send("Here's some text that the server is urgently awaiting!");  
-   
+    socketHandler();
 };
