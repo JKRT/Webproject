@@ -3,7 +3,7 @@
    of this function will change in the show* functions */
 currentView = showHome;
 currentlyViewing = "";
- 
+/***/
 displayView = function() {
     console.log("Display view called");
     if(sessionStorage.token)  {
@@ -295,4 +295,16 @@ function changePassword() {
 
 window.onload = function() {
     displayView();
+
+    /*Just an example remove later */
+    exampleSocket = new WebSocket("ws://localhost:5000/example"); 
+    exampleSocket.onopen = function (event) {
+	exampleSocket.send("Here's some text that the server is urgently awaiting!");   
+    };
+
+    exampleSocket.onmessage = function (event) {
+	console.log(event.data);
+    };
+    exampleSocket.send("Here's some text that the server is urgently awaiting!");  
+   
 };

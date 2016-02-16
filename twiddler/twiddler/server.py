@@ -8,6 +8,19 @@ import database_helper
 def index():
     return app.send_static_file('client.html')
 
+@app.route('/example')
+def example():
+    print "Enter example"
+    if request.environ.get('wsgi.websocket'):
+        print "if 1"
+        ws = request.environ['wsgi.websocket']
+        print ws
+        while True:
+            message = ws.receive()
+            print "while"
+            ws.send(message)
+    return
+
 @app.route('/sign_in', methods=['POST'])
 def sign_in(username = None , password = None):
     username = request.form['email'] 
@@ -25,7 +38,6 @@ def sign_up( email = None, password = None, first_name = None ,
                    "gender": request.form['gender'] , "country": request.form['country'] ,
                    "city": request.form['city']}
 
-    #dont worry be happy
     for key,value in input_dict.items():
         if  input_dict[key] is None or input_dict[key] == "":
             return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
@@ -97,9 +109,8 @@ def post_message(token = None,message = None ,email = None):
     if token == None or message == None or email == None:  
         return json.dumps({"success": False, "message": "You are not signed in."})
     else:
-        a = database_helper.post_message(token, message, email)
-        print a
-        return a
+        return database_helper.post_message(token, message, email)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    pass
