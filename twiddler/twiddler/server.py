@@ -17,29 +17,37 @@ def example():
 
 
 
-# @app.route('/socket_handler')                
-# def handler():
-#     if request.environ.get('wsgi.websocket'):
-#         ws = request.environ['wsgi.websocket']
-#     try:
-#         while True:
-#             message = ws.receive()
-#             message = json.loads(message)
-#             query = json.loads(get_user_data_by_token(message[token]))
-#             if not query.success: 
-#                 ws.send(query)
-#                 ws.close()
-#                 return
-#             #Decide what to do from the message
-#             if message["email"] is in active_users:
-#                 #Ta bort alla hans tokens fy fan.
-#                 active_users[mail].close()
-#             active_users[mail] = ws
-                    
-#     except:
-#         ws.send("406")
-#         ws.close()
-#     return
+@app.route('/socket_handler')                
+def auto_logout_handler():
+    print "Attempting to bind socket..."
+    if request.environ.get('wsgi.websocket'):
+        ws = request.environ['wsgi.websocket']
+        print "Socket bound to server..."
+    try:
+        while True:
+            message = ws.receive()
+            print "message received with: " + message
+            message = json.loads(message)
+            email = message["email"] ; token = message["token"]
+            query = json.loads(get_user_data_by_token(token))
+            print "active users: " + active_users
+            if not query.success: 
+                ws.send(query)
+                ws.close()
+                return
+            #Decide what to do from the message
+            if email in active_users:
+                #Ta bort alla hans tokens fy fan.
+                database_helper.sign_out_all(email,token)
+                active_users[email].close()
+                active_users[email] = ws
+            elif email not in active_users:
+                active_users.update(email,ws)
+            print "active users: " + active_users
+    except:
+        ws.send("406")
+        ws.close()
+    return
 
 @app.route('/', methods=['GET'])
 def index():

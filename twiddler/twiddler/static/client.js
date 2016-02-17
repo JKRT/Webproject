@@ -3,26 +3,25 @@
    of this function will change in the show* functions */
 currentView = showHome;
 currentlyViewing = "";
+socketHandler = new SocketHandler();
 /***/
 
 /*handles socket connections to the server */
-SocketHandler = function(mail) {
-    this.socket = new WebSocket("ws://localhost:7777/example");
-    this.email = mail;
-    socket.onmessage = function (event) {
-	console.log(event.data);
-	//exampleSocket.send("Here's some text that the server is urgently awaiting!");
-	// {request : connection , email : yadayoda}
-	/* simpelt protokoll nagot i linje med {request : logout} 
-	 * sedan kan vi ju oeka det allt eftersom 
-	 */
+function SocketHandler() {
+    this.handlerSocket = null;    
+    this.createSocket = function() {
+	console.log("Entered socket handler, attempting connection...");
+	this.handlerSocket = new WebSocket("ws://localhost:7777/socket_handler");
+	console.log("Connection to server status: " + this.handlerSocket.readyState);    
+	this.handlerSocket.onopen = function() {
+	    this.handlerSocket.send('{"email": "' + this.email + '", "token": "' + sessionStorage.token + '"}');
+	};
 	
-	if(b.request === "logout"){
-	    logout();
-	}
-    };
-    socket.onopen = function (event) {
-	socket.send('{"email": "' + this.email + '", "token": "' + sessionStorage.token + '"}');   	
+	this.handlerSocket.onclose = function (event) {
+	    alert("Sorry kompis");
+	    sessionStorage.removeItem("token");
+	    displayView();
+	};
     };
 };
 
@@ -109,7 +108,9 @@ function checkLogin() {
             } else {
                 //Save the token in the browser...
                 sessionStorage.token = signInObject.data;
-		// socketHandler = new SocketHandler(email);
+		/*Init socket handler */
+		SocketHandler.createSocket();
+		SocketHandler.email = email;
 		displayView();
             }
         }
