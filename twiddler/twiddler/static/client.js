@@ -4,6 +4,28 @@
 currentView = showHome;
 currentlyViewing = "";
 /***/
+
+/*handles socket connections to the server */
+SocketHandler = function(mail) {
+    this.socket = new WebSocket("ws://localhost:7777/example");
+    this.email = mail;
+    socket.onmessage = function (event) {
+	console.log(event.data);
+	//exampleSocket.send("Here's some text that the server is urgently awaiting!");
+	// {request : connection , email : yadayoda}
+	/* simpelt protokoll nagot i linje med {request : logout} 
+	 * sedan kan vi ju oeka det allt eftersom 
+	 */
+	
+	if(b.request === "logout"){
+	    logout();
+	}
+    };
+    socket.onopen = function (event) {
+	socket.send('{"email": "' + this.email + '", "token": "' + sessionStorage.token + '"}');   	
+    };
+};
+
 displayView = function() {
     console.log("Display view called");
     if(sessionStorage.token)  {
@@ -87,7 +109,8 @@ function checkLogin() {
             } else {
                 //Save the token in the browser...
                 sessionStorage.token = signInObject.data;
-                displayView();
+		// socketHandler = new SocketHandler(email);
+		displayView();
             }
         }
     };
@@ -293,18 +316,6 @@ function changePassword() {
     return false;
 } 
 
- socketHandler = function() {
-	exampleSocket = new WebSocket("ws://localhost:7777/example");
-	exampleSocket.onmessage = function (event) {
-	    console.log(event.data);
-	    //exampleSocket.send("Here's some text that the server is urgently awaiting!");  
-	};
-	exampleSocket.onopen = function (event) {
-	    exampleSocket.send("Here's some text that the server is urgently awaiting!");   	
-	};
-    };
-
 window.onload = function() {
     displayView();
-    socketHandler();
 };

@@ -4,20 +4,42 @@ from twiddler import app
 import json
 import database_helper
 
-class AutoLogin:
-    @app.route('/example')
-    def example():
-        print "Enter example"
-        if request.environ.get('wsgi.websocket'):
-            print "if 1"
-            ws = request.environ['wsgi.websocket']
-            print ws
-            while True:
-                message = ws.receive()
-                print "while"
-                ws.send(message)
-                return
+    #active users should contain the websocket and the email adress or something like that
+active_users = {}
+@app.route('/example')
+def example():
+    if request.environ.get('wsgi.websocket'):
+        ws = request.environ['wsgi.websocket']
+        while True:
+            message = ws.receive()
+            ws.send(message)
+        return                
 
+
+
+# @app.route('/socket_handler')                
+# def handler():
+#     if request.environ.get('wsgi.websocket'):
+#         ws = request.environ['wsgi.websocket']
+#     try:
+#         while True:
+#             message = ws.receive()
+#             message = json.loads(message)
+#             query = json.loads(get_user_data_by_token(message[token]))
+#             if not query.success: 
+#                 ws.send(query)
+#                 ws.close()
+#                 return
+#             #Decide what to do from the message
+#             if message["email"] is in active_users:
+#                 #Ta bort alla hans tokens fy fan.
+#                 active_users[mail].close()
+#             active_users[mail] = ws
+                    
+#     except:
+#         ws.send("406")
+#         ws.close()
+#     return
 
 @app.route('/', methods=['GET'])
 def index():
@@ -107,7 +129,7 @@ def post_message(token = None,message = None ,email = None):
     token = request.form['token']
     message = request.form['message']
     email = request.form['email']
-    print token + ':' + message + ':' + email
+    # print token + ':' + message + ':' + email
     if token == None or message == None or email == None:  
         return json.dumps({"success": False, "message": "You are not signed in."})
     else:

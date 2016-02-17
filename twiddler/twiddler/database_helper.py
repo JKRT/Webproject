@@ -161,5 +161,15 @@ def post_message(token, message, email):
                        (sender_id,recipient_id,strftime("%Y-%m-%d %H:%M:%S", localtime()), message))
         return json.dumps({"success": True, "message": "Message posted"}) 
 
+# def sign_out_all(email, token):
+#     with Database() as cursor:
+#         cursor.execute("SELECT * FROM tokens WHERE id=?", (token,))
+#         if cursor.fetchone() == None: return json.dumps( {"success": False, "message": "No such user."}
+#         cursor.execute("SELECT id from users WHERE email=? " , (email,))
+#         if cursor.fetchone() == None: return json.dumps( {"success": False, "message": "No such user."}
+
+#         cursor.execute("DELETE FROM tokens WHERE NOT id=?", (token,))
+#         return  json.dumps({"success": True, "message": "Successfully signed out."})
+
 def generate_token():
     return str(uuid.uuid4()).replace('-', '')
