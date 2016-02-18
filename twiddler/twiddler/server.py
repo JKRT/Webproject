@@ -5,7 +5,7 @@ import json
 import database_helper
 
     #active users should contain the websocket and the email adress or something like that
-active_users = {}
+active_users = dict()
 @app.route('/example')
 def example():
     if request.environ.get('wsgi.websocket'):
@@ -15,39 +15,68 @@ def example():
             ws.send(message)
         return                
 
+def bound_email(socket):
+    for k, v in active_users.items():
+        if v is socket: return k;
+    return "None"
 
-
-@app.route('/socket_handler')                
-def auto_logout_handler():
-    print "Attempting to bind socket..."
+@app.route('/websocket')
+def websocket():
+    print "Client request received."
+    print "Attempting to bind WebSocket..."
     if request.environ.get('wsgi.websocket'):
         ws = request.environ['wsgi.websocket']
-        print "Socket bound to server..."
+        print "Socket bound between client and server!"
+    else:
+        return json.dumps({"success": False,
+               "message": "Failed to bind socket!"})
+
     try:
         while True:
+            print "Waiting..."
             message = ws.receive()
-            print "message received with: " + message
+            if message == None:
+                print "Client closed socket?"
+                email = bound_email(ws)
+                if email != "None":
+                    del active_users[email]
+                return
+            print "Message received with contents '" + message + "'."
+
             message = json.loads(message)
             email = message["email"] ; token = message["token"]
-            query = json.loads(get_user_data_by_token(token))
-            print "active users: " + active_users
-            if not query.success: 
-                ws.send(query)
+            print "Attempting to validate user with the given token..."
+            query = json.loads(database_helper.get_user_data_by_token(token))
+            print "Active users are: '" + json.dumps(active_users.keys()) + "'."
+
+            if not query["success"]:
                 ws.close()
-                return
+                print "Query failed. Oops?"
+                return json.dumps({"success": False,
+                       "message": "Initial query failed!"})
+
             #Decide what to do from the message
             if email in active_users:
+                print "Closing all active sockets of user..."
                 #Ta bort alla hans tokens fy fan.
                 database_helper.sign_out_all(email,token)
                 active_users[email].close()
                 active_users[email] = ws
+                print "User has now the current socket session!"
             elif email not in active_users:
-                active_users.update(email,ws)
-            print "active users: " + active_users
+                print "No active sockets... Nice!"
+                active_users[email] = ws
+                print "User has now the current socket session!"
+            print "Active users are: '" + json.dumps(active_users.keys()) + "'."
     except:
-        ws.send("406")
+        print "Some shit happend yo, tis bad"
+        ws.send("406: Shit happens yo")
         ws.close()
-    return
+        return json.dumps({"success": False,
+               "message": "Something went very wrong..."})
+    print "Seems we got out of the loop? Wat?"
+    return json.dumps({"success": True,
+           "message": "Successfully linked socket with user! Yay!"})
 
 @app.route('/', methods=['GET'])
 def index():

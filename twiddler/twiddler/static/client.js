@@ -3,25 +3,28 @@
    of this function will change in the show* functions */
 currentView = showHome;
 currentlyViewing = "";
-socketHandler = new SocketHandler();
-/***/
 
-/*handles socket connections to the server */
-function SocketHandler() {
-    this.handlerSocket = null;    
-    this.createSocket = function() {
-	console.log("Entered socket handler, attempting connection...");
-	this.handlerSocket = new WebSocket("ws://localhost:7777/socket_handler");
-	console.log("Connection to server status: " + this.handlerSocket.readyState);    
-	this.handlerSocket.onopen = function() {
-	    this.handlerSocket.send('{"email": "' + this.email + '", "token": "' + sessionStorage.token + '"}');
-	};
-	
-	this.handlerSocket.onclose = function (event) {
-	    alert("Sorry kompis");
-	    sessionStorage.removeItem("token");
-	    displayView();
-	};
+tsocket = null;
+TwiddlerSocket = function(email, token) {
+    var user_email = email;
+    var user_token = token;
+    var handle = new WebSocket("ws://localhost:7777/websocket");
+    console.log("Connecting to Twiddler WebSocket...");
+    console.log("State of connection is '" + handle.readyState) + "'.";
+
+    handle.onopen = function(event) {
+        console.log("Twiddler WebSocket has opened!");
+        console.log("Sending token and email, hoping to gain access...");
+        data = {email: user_email, token: user_token};
+        handle.send(JSON.stringify(data));
+    };
+
+    this.close = function() { handle.close(); };
+    handle.onclose = function(event) {
+        console.log("Twiddler WebSocket has closed, oh no!");
+        console.log("Logging user out of application...");
+        sessionStorage.removeItem("token");
+        displayView(); // Welcome view?
     };
 };
 
@@ -108,10 +111,10 @@ function checkLogin() {
             } else {
                 //Save the token in the browser...
                 sessionStorage.token = signInObject.data;
-		/*Init socket handler */
-		SocketHandler.createSocket();
-		SocketHandler.email = email;
-		displayView();
+                // Initiate socket connection here...
+                tsocket = new TwiddlerSocket(email, sessionStorage.token);
+                console.log("Now waiting for socket response...");
+                displayView();
             }
         }
     };
@@ -175,7 +178,6 @@ function initHome(userData) {
             for (var message of messageData.data) {
                 chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
 	    }
-	    console.log(chatLog);
             document.getElementById("chatPanel").innerHTML = chatLog;
         }
     };
@@ -256,6 +258,7 @@ function logout() {
         // Waiting for request to finish, 4 when response is ready.
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 	    sessionStorage.removeItem("token");
+        tsocket.close();
 	    displayView();
 	}
     };
