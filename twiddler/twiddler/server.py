@@ -17,8 +17,9 @@ def example():
 
 def bound_email(socket):
     for k, v in active_users.items():
-        if v is socket: return k;
-    return "None"
+        if v is socket: 
+            return k;
+    return None
 
 @app.route('/websocket')
 def websocket():
@@ -30,7 +31,6 @@ def websocket():
     else:
         return json.dumps({"success": False,
                "message": "Failed to bind socket!"})
-
     try:
         while True:
             print "Waiting..."
@@ -38,7 +38,7 @@ def websocket():
             if message == None:
                 print "Client closed socket?"
                 email = bound_email(ws)
-                if email != "None":
+                if email != None:
                     del active_users[email]
                 return
             print "Message received with contents '" + message + "'."
