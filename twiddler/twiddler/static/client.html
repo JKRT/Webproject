@@ -95,14 +95,10 @@
 	      </div>
 
 	      <div id="chatBoxPanel" >
+		<div><input type="file" id="upload" class="chatButton" onchange="uploadMedia()"></div>
 		<textarea id="chatBox"></textarea>
-		<button id="reload" class="chatButton" onclick="reloadMessages()">
-		  Reload
-		</button>
-
-		<button id="post" class="chatButton" onclick="postMessage()">
-		  Post
-		</button>
+		<button id="reload" class="chatButton" onclick="reloadMessages()">Reload</button>
+		<button id="post" class="chatButton" onclick="postMessage()">Post</button>
 	      </div>
 	    </div>
 	    <div id="lowerRightPanel" class="panel">

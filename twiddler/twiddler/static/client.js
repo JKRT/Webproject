@@ -3,8 +3,9 @@
    of this function will change in the show* functions */
 currentView = showHome;
 currentlyViewing = "";
-
 tsocket = null;
+twiddlerMediaObject = null;
+
 TwiddlerSocket = function(email, token) {
     var userEmail = email;
     var userToken = token;
@@ -29,6 +30,18 @@ TwiddlerSocket = function(email, token) {
         displayView(); // Welcome view?
     };
 };
+
+TwiddlerMediaObject = function(image) {
+    console.log("Called twitter image constructor");
+    var imageToUpload = image; 
+    //Upload the image / media file to the server
+    constructor = function() {
+	
+    };
+    this.constructor();
+};
+
+
 
 displayView = function() {
     console.log("Display view called");
@@ -276,6 +289,10 @@ function reloadMessages () {
 function postMessage() {
     console.log("postMessage() called");
     var recipient = null;
+    if (twiddlerMediaObject != null) {
+	
+    }
+
     if(currentView === showBrowse ) {
         // recipient = document.getElementById("email3").value;
 	recipient = currentlyViewing;
@@ -303,6 +320,10 @@ function postMessage() {
 
 }
 
+function uploadMedia() {
+    twidlerMediaObject = new TwiddlerMediaObject(document.getElementById("upload").value);
+}
+
 function changePassword() {
     console.log("Called changePassword()");
     xhttp = new XMLHttpRequest();
@@ -321,6 +342,13 @@ function changePassword() {
     };
     return false;
 } 
+
+/* Chrome doesn't handle onclose on the WebSocket
+ * properly, instead log user out when page is reloaded. */
+window.onbeforeunload = function() {
+    sessionStorage.removeItem("token");
+    displayView(); // Welcome view?
+}
 
 window.onload = function() {
     displayView();

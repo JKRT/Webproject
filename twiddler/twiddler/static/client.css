@@ -112,15 +112,18 @@ input.formSubmit {
 #homeButton {
     width: 100%;
     height: 20%;
+    overflow: hidden;
 }
 
 #browseButton {
+    overflow: hidden;
     width: 100%;
     height: 20%;
     top: 40%
 }
 
 #accountButton {
+    overflow: hidden;
     width: 100%;
     height: 20%;
     top: 80%
@@ -146,20 +149,22 @@ input.formSubmit {
 
 #chatBoxPanel {
     width: 100%;
-    height: 15%;
-    bottom: 0;
+    height: 20%;
+    bottom: 1%;
     position:absolute;
 }
 
 #chatBox {
-    width: 73%;
-    height: 75%;
+    width: 71%;
+    height: 55%;
     resize: none;
     float: left;
+    margin-right: 5px;
 }
 
 button.chatButton {
     width: 22%;
+    height: 33%;
 }
 
 #browsePanel {
