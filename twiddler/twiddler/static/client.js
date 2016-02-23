@@ -4,18 +4,6 @@
 console.log("Setting global variables");
 currentView = function() {};
 currentlyViewing = "";
-
-displayView = function() {
-    console.log("Display view called");
-    if(sessionStorage.token)  {
-	console.log("Trying to fetch the home view");
-	saveStateAndRedirect("Home");
-    } else {
-        console.log("trying to fetch welcome view");
-	saveStateAndRedirect("Welcome");
-    }
-};
-
 /*
  *  Checks the the password for the signup form is correct. 
  */
@@ -91,6 +79,8 @@ function checkLogin() {
                 // Initiate socket connection here...
 		tsocket = new TwiddlerSocket(email, sessionStorage.token);
                 console.log("Now waiting for socket response...");
+		/*The current view after this should be the home view */
+		currentView = showHome;
                 displayView();
             }
         }

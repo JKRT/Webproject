@@ -3,8 +3,32 @@
  */
 
 
+
+
+function displayView() {
+    console.log("Display view called");
+    if(sessionStorage.token)  {
+	console.log("Trying to fetch the home view");
+	switch(currentView.name) {
+	case "showHome":
+	    saveStateAndRedirect("Home");
+	    break;
+	case "showAccount": 
+	    saveStateAndRedirect("Account");
+	    break;
+	case "showBrowse":
+	    saveStateAndRedirect("Browse");
+	    break;
+	}
+    } else {
+        console.log("trying to fetch welcome view");
+	saveStateAndRedirect("Welcome");
+    }
+};
+
 /*This page initilizes the page library, the functions can
  then be used , I have not decided yet what the wildcard should do*/
+
 initPages = function() {
     page("/Welcome", function(){
 	console.log("/welcome in initPages called");
@@ -140,6 +164,7 @@ function initHome(userData) {
 function showAccount() {
     console.log("Called showAccount()");
     currentView = showAccount;
+    document.getElementById("content").innerHTML = document.getElementById("profileView").text;
     document.getElementById("accountPanel").style.display = "block";
     document.getElementById("homePanel").style.display = "none";
     document.getElementById("chatPanel").style.display = "none";
@@ -148,7 +173,7 @@ function showAccount() {
 }
 
 function browseUsers(reload){
-    console.log("Browse called");
+    console.log("browseUsers called");
     var email = null;
     if (reload) email = currentlyViewing;
     else email = document.getElementById("email3").value;
@@ -192,6 +217,7 @@ function browseUsers(reload){
 function showBrowse(reload) {
     console.log("Called showBrowse()");
     currentView = showBrowse;
+    document.getElementById("content").innerHTML = document.getElementById("profileView").text;
     document.getElementById("homePanel").style.display = "block";
     document.getElementById("chatPanel").style.display = "block";
     document.getElementById("chatBoxPanel").style.display = "block";

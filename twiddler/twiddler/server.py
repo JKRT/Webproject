@@ -8,7 +8,7 @@ import uuid
 import database_helper
 
 #active users should contain the websocket and the email adress
-
+active_users = dict()
 def bound_email(socket):
     for k, v in active_users.items():
         if v is socket: 
@@ -38,20 +38,35 @@ def websocket():
             print "Message received with contents '" + message + "'."
 
             message = json.loads(message)
-            token = message["token"]
-            email = json.loads(database_helper.get_user_data_by_token(token))["data"]["email"]
+            token = message["token"] ; email = ""
+            refresh = False;
+            #If this is the case the user has a token and we can just refresh the socket.
+            if len(message) == 1:
+                email = json.loads(database_helper.get_user_data_by_token(token))["data"]["email"]
+                refresh = True
+            elif len(message) == 2:
+                email = message["email"]
+            else:
+                #The case when we recieve a message without contents. 
+                print "Keeping the conncetion alive"
+                ws.send("Keeping the dream alive")
+                return json.dumps({"success": True,
+                                   "message": "Socket is kept alive"})
+
+
             print "Attempting to validate user with the given token..."
             query = json.loads(database_helper.get_user_data_by_token(token))
-            print "Active users are: '" + json.dumps(active_users.keys()) + "'."
 
             if not query["success"]:
                 ws.close()
                 print "Query failed. Oops?"
                 return json.dumps({"success": False,
                        "message": "Initial query failed!"})
-
-            #Decide what to do from the message
-            if email in active_users:
+            if refresh:
+                print "Refresh requested"
+                active_users[email] = ws
+            #Decide what to do from the message, autologout process
+            elif email in active_users:
                 print "Closing all active sockets of user..."
                 #Ta bort alla hans tokens fy fan.
                 database_helper.sign_out_all(email,token)
@@ -59,16 +74,17 @@ def websocket():
                 active_users[email] = ws
                 print "User has now the current socket session!"
             elif email not in active_users:
-                print "No active sockets... Nice!"
+                print "No active sockets Nice!"
                 active_users[email] = ws
                 print "User has now the current socket session!"
             print "Active users are: '" + json.dumps(active_users.keys()) + "'."
-    except:
-        print "Some shit happend yo, tis bad"
+    except Exception,e:
+        print e
         ws.send("406: Shit happens yo")
         ws.close()
         return json.dumps({"success": False,
                "message": "Something went very wrong..."})
+
     print "Seems we got out of the loop? Wat?"
     return json.dumps({"success": True,
            "message": "Successfully linked socket with user! Yay!"})

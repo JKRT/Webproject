@@ -24,7 +24,7 @@ TwiddlerSocket = function(email, token) {
 	if( event.data === "close" ) {
 	    console.log("Logging user out of application...");
 	    sessionStorage.removeItem("token");
-	    displayView(); // Welcome view?
+	    displayView(); 
 	}
     };
 };
