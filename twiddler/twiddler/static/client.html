@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
       <title>Twiddler95: Welcome to 1995!</title>
       <link href="client.css" type="text/css" rel="stylesheet">
-	<script src="client.js" type="text/javascript"></script>
-	<script src="socket.js" type="text/javascript"> </script>
-	<script id="welcomeView" type="text/view">
+      <script src="client.js" type="text/javascript"></script>
+      <script src="socket.js" type="text/javascript"> </script>
+      <script src="page/page.js" type="text/javascript"> </script>
+      <script id="welcomeView" type="text/view">
 	  <div id="wrapper">
 	    <div id="leftPanel" class="panel" style="text-align: center;">
 	      <div style="margin-top: 100px;"><img src="logo95.png"><br><br>
@@ -135,9 +136,9 @@
 	    </div>
 
 	    <div id="upperRightPanel" style="overflow: visible;" class="panelWrapper">
-              <div id="homeButton" class="button panel" onclick="showHome()"><strong>Home</strong></div>
-              <div id="browseButton" class="button panel" onclick="showBrowse(false)"><strong>Browse</strong></div>
-              <div id="accountButton" class="button panel" onclick="showAccount()"><strong>Account</strong></div>
+              <div id="homeButton" class="button panel" onclick="saveStateAndRedirect('Home')"><strong>Home</strong></div>
+              <div id="browseButton" class="button panel" onclick="saveStateAndRedirect('Browse')"><strong>Browse</strong></div>
+              <div id="accountButton" class="button panel" onclick="saveStateAndRedirect('Account')"><strong>Account</strong></div>
 	    </div>
 
 	    <div id="browsePanel" class="panel"  >

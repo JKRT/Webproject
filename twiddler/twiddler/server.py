@@ -7,8 +7,7 @@ import json
 import uuid
 import database_helper
 
-    #active users should contain the websocket and the email adress or something like that
-active_users = dict()
+#active users should contain the websocket and the email adress
 
 def bound_email(socket):
     for k, v in active_users.items():
@@ -76,6 +75,22 @@ def websocket():
 
 @app.route('/', methods=['GET'])
 def index():
+    return app.send_static_file('client.html')
+
+@app.route('/Welcome', methods=['GET'])
+def welcome():
+    return app.send_static_file('client.html')
+
+@app.route('/Browse', methods=['GET'])
+def browse():
+    return app.send_static_file('client.html')
+
+@app.route('/Home', methods=['GET'])
+def home():
+    return app.send_static_file('client.html')
+
+@app.route('/Account', methods=['GET'])
+def account():
     return app.send_static_file('client.html')
 
 @app.route('/sign_in', methods=['POST'])

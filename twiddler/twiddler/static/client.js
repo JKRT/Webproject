@@ -1,17 +1,18 @@
 /*
   Displaying the current view, the default is the home view but the value 
    of this function will change in the show* functions */
-currentView = showHome;
+console.log("Setting global variables");
+currentView = function() {};
 currentlyViewing = "";
 
 displayView = function() {
     console.log("Display view called");
     if(sessionStorage.token)  {
-        document.getElementById("content").innerHTML = document.getElementById("profileView").text;
-        currentView();
+	console.log("Trying to fetch the home view");
+	saveStateAndRedirect("Home");
     } else {
         console.log("trying to fetch welcome view");
-        document.getElementById("content").innerHTML = document.getElementById("welcomeView").text;
+	saveStateAndRedirect("Welcome");
     }
 };
 
@@ -98,9 +99,16 @@ function checkLogin() {
     return false;
 }
 
+function showWelcome() {
+    console.log("Called show welcome");
+    currentView = showWelcome; 
+    document.getElementById("content").innerHTML = document.getElementById("welcomeView").text;
+}
+
 function showHome() {
     console.log("Called showHome()");
     currentView = showHome;
+    document.getElementById("content").innerHTML = document.getElementById("profileView").text;
     document.getElementById("homePanel").style.display = "block";
     document.getElementById("chatPanel").style.display = "block";
     document.getElementById("chatBoxPanel").style.display = "block";
@@ -303,7 +311,74 @@ function changePassword() {
     return false;
 } 
 
+/*This page initilizes the page library, the functions can
+ then be used , I have not decided yet what the wildcard should do*/
+initPages = function() {
+    page("/Welcome", function(){
+	console.log("/welcome in initPages called");
+	showWelcome();
+    });
+
+    page("/Home", function() {
+	console.log("/home in initPages called");
+	showHome();
+    });
+    
+    page("/Account", function() {
+	console.log("/account in initPages called");
+	showAccount();
+    });
+
+    page("/Browse", function() {
+	console.log("/browse in initPages called");
+	showBrowse(false);
+    });
+
+     page("*", function() {
+	 console.log("I dont know man, wildcard baby");
+     });
+
+    page.start();
+};
+
+
+/*This function saves the states and then redirects the user. */
+function saveStateAndRedirect(action){ 
+    console.log("Called save state and redirect with action:" + action);
+    var stateObj = null;
+    name = null;
+    switch(action) {
+    case "Welcome":
+	page.redirect("/Welcome");
+	stateObj = {name:"Welcome"};
+	name = "Welcome";
+	break;
+    case "Home":
+	page.redirect("/Home");
+	stateObj = {name:"Welcome"};
+	name = "Home";
+	break;
+    case "Account":
+	page.redirect("/Account");
+	stateObj = {name:"Account"};
+	name = "Account";
+	break;
+    case "Browse": 
+	page.redirect("/Browse");
+	stateObj = {name:"Browse"};
+	name = "Browse";
+	break;
+    default:
+	page.redirect("/Welcome");
+	stateObj = {name:"Welcome"};
+	name = "Welcome";
+	break;
+    }
+    history.pushState(stateObj,name,name);
+};
+
 window.onload = function() {
     tsocket = new TwiddlerSocket(null, sessionStorage.token);
+    initPages();
     displayView();
 };
