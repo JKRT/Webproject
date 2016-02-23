@@ -1,7 +1,10 @@
 from flask import *
 from twiddler import app
+from werkzeug import secure_filename
 
+import os
 import json
+import uuid
 import database_helper
 
     #active users should contain the websocket and the email adress or something like that
@@ -161,16 +164,40 @@ def get_user_messages_by_email(token = None, email = None):
         return json.dumps({"success": False, "message": "You are not signed in."})
     return database_helper.get_user_messages_by_email(token, email)
 
+ALLOWED_EXTENSIONS = set(["png", "ogg"])
+def valid_media(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
 @app.route('/post_message',methods = ['POST'])
-def post_message(token = None,message = None ,email = None): 
+def post_message(token = None, message = None, email = None, media = None):
     token = request.form['token']
     message = request.form['message']
     email = request.form['email']
-    # print token + ':' + message + ':' + email
-    if token == None or message == None or email == None:  
+    media = request.files.get('media')
+
+    filename = ""
+    if media != None:
+        if valid_media(media.filename):
+            salt = str(uuid.uuid4())
+            filename = secure_filename(media.filename)
+            media.save(os.path.join(app.config['UPLOAD_FOLDER'], salt + "_" +  filename))
+            information = "Media '{}' uploaded to server by '{}' in folder '{}'."
+            print information.format(media.filename, email, app.config['UPLOAD_FOLDER'])
+            print "Effective path is: '{}/{}'".format(app.config['UPLOAD_FOLDER'], salt + "_" + filename)
+        else: return json.dumps({"success": False, "message": "Media not supported."})
+    # Maybe check credentials first? Do this in the database_helper or not? Hmmmmmmmm.
+    # File name is generated with a uuid4 salt: UUID4_FILE.EXT.
+
+    if token == None or message == None or email == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
-    else:
-        return database_helper.post_message(token, message, email)
+    else: return database_helper.post_message(token, message, email)
+
+@app.route('/media/<filename>')
+def transfer_media_file(filename):
+    print "Get '{}'".format(filename)
+    print "From '{}'".format(app.config['UPLOAD_FOLDER'])
+    media_file = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    return media_file
 
 if __name__ == '__main__':
     #app.run(debug=True)

@@ -4,7 +4,6 @@
 currentView = showHome;
 currentlyViewing = "";
 tsocket = null;
-twiddlerMediaObject = null;
 
 TwiddlerSocket = function(email, token) {
     var userEmail = email;
@@ -30,18 +29,6 @@ TwiddlerSocket = function(email, token) {
         displayView(); // Welcome view?
     };
 };
-
-TwiddlerMediaObject = function(image) {
-    console.log("Called twitter image constructor");
-    var imageToUpload = image; 
-    //Upload the image / media file to the server
-    constructor = function() {
-	
-    };
-    this.constructor();
-};
-
-
 
 displayView = function() {
     console.log("Display view called");
@@ -289,10 +276,6 @@ function reloadMessages () {
 function postMessage() {
     console.log("postMessage() called");
     var recipient = null;
-    if (twiddlerMediaObject != null) {
-	
-    }
-
     if(currentView === showBrowse ) {
         // recipient = document.getElementById("email3").value;
 	recipient = currentlyViewing;
@@ -303,25 +286,29 @@ function postMessage() {
 	recipient = recipient.split(">");
 	recipient = recipient[recipient.length - 1];
     }
+
     console.log("With recipiant:" + recipient);
     var messageContent = document.getElementById("chatBox");
+    var mediaObject = document.getElementById("mediaBrowser");
+
+    var form = new FormData();
+    form.append("token", sessionStorage.token);
+    form.append("message", messageContent.value);
+    form.append("email", recipient);
+    if (mediaObject.length != 0)
+        form.append("media", mediaObject.files[0]);
+
     xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/post_message", true);
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send("token=" + sessionStorage.token + "&message=" 
-	       + messageContent.value + "&email=" + recipient ); 
+    xhttp.send(form);
 
     xhttp.onreadystatechange = function() {
-	if (xhttp.readyState == 4 && xhttp.status == 200) {
-	    messageContent.value = "";
-	    reloadMessages();
-	}
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            messageContent.value = "";
+            reloadMessages();
+        }
     };
 
-}
-
-function uploadMedia() {
-    twidlerMediaObject = new TwiddlerMediaObject(document.getElementById("upload").value);
 }
 
 function changePassword() {

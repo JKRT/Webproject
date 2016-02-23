@@ -5,6 +5,10 @@
 # Icon must end with two \r
 Icon
 
+*.png
+*.ogg
+*.mp4
+
 # Thumbnails
 ._*
 
