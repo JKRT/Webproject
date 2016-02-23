@@ -184,13 +184,15 @@ def post_message(token = None, message = None, email = None, media = None):
             information = "Media '{}' uploaded to server by '{}' in folder '{}'."
             print information.format(media.filename, email, app.config['UPLOAD_FOLDER'])
             print "Effective path is: '{}/{}'".format(app.config['UPLOAD_FOLDER'], salt + "_" + filename)
-        else: return json.dumps({"success": False, "message": "Media not supported."})
-    # Maybe check credentials first? Do this in the database_helper or not? Hmmmmmmmm.
-    # File name is generated with a uuid4 salt: UUID4_FILE.EXT.
+        else: 
+            return json.dumps({"success": False, "message": "Media not supported."})
+            # Maybe check credentials first? Do this in the database_helper or not? Hmmmmmmmm.
+            # File name is generated with a uuid4 salt: UUID4_FILE.EXT.
 
     if token == None or message == None or email == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
-    else: return database_helper.post_message(token, message, email)
+    else: 
+        return database_helper.post_message(token, message, email)
 
 @app.route('/media/<filename>')
 def transfer_media_file(filename):
