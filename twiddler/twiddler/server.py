@@ -164,9 +164,10 @@ def get_user_messages_by_email(token = None, email = None):
         return json.dumps({"success": False, "message": "You are not signed in."})
     return database_helper.get_user_messages_by_email(token, email)
 
-ALLOWED_EXTENSIONS = set(["png", "ogg"])
+ALLOWED_EXTENSIONS = ["png", "jpg", "ogg", "mp4"]
+
 def valid_media(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1] in set(ALLOWED_EXTENSIONS)
 
 @app.route('/post_message',methods = ['POST'])
 def post_message(token = None, message = None, email = None, media = None):
@@ -175,7 +176,6 @@ def post_message(token = None, message = None, email = None, media = None):
     email = request.form['email']
     media = request.files.get('media')
 
-    filename = ""
     if media != None:
         if valid_media(media.filename):
             salt = str(uuid.uuid4())
@@ -184,6 +184,21 @@ def post_message(token = None, message = None, email = None, media = None):
             information = "Media '{}' uploaded to server by '{}' in folder '{}'."
             print information.format(media.filename, email, app.config['UPLOAD_FOLDER'])
             print "Effective path is: '{}/{}'".format(app.config['UPLOAD_FOLDER'], salt + "_" + filename)
+            filename = salt + "_" + filename
+            try:
+                media_tag = ""
+                media_path = "media/" + filename
+                print filename[-3:]
+                print ALLOWED_EXTENSIONS[:2]
+                if filename[-3:] in ALLOWED_EXTENSIONS[:2]:
+                    media_tag = "<img src='" + media_path + "'width=290'>"
+                elif filename[-3:] in ALLOWED_EXTENSIONS[-2:]:
+                    mp4_source = "<source src='" + media_path + "' type='video/mp4'>"
+                    ogg_source = "<source src='" + media_path + "' type='video/ogg'>"
+                    media_tag = "<video controls>" + mp4_source + ogg_source + "</video>"
+                message = media_tag + message + "<br>"
+            except:
+                pass
         else: 
             return json.dumps({"success": False, "message": "Media not supported."})
             # Maybe check credentials first? Do this in the database_helper or not? Hmmmmmmmm.
@@ -194,12 +209,12 @@ def post_message(token = None, message = None, email = None, media = None):
     else: 
         return database_helper.post_message(token, message, email)
 
-@app.route('/media/<filename>')
-def transfer_media_file(filename):
-    print "Get '{}'".format(filename)
-    print "From '{}'".format(app.config['UPLOAD_FOLDER'])
-    media_file = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-    return media_file
+# @app.route('/media/<filename>')
+# def transfer_media_file(filename):
+#     print "Get '{}'".format(filename)
+#     print "From '{}'".format(app.config['UPLOAD_FOLDER'])
+#     media_file = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+#     return media_file
 
 if __name__ == '__main__':
     #app.run(debug=True)

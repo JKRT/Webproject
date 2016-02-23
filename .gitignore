@@ -8,6 +8,8 @@ Icon
 *.png
 *.ogg
 *.mp4
+*.jpg
+*.jpeg
 
 # Thumbnails
 ._*
