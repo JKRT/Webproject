@@ -40,8 +40,7 @@ def websocket():
 
             message = json.loads(message)
             token = message["token"]
-            email = json.loads(database_helper.get_user_data_by_token(token))["email"]
-            
+            email = json.loads(database_helper.get_user_data_by_token(token))["data"]["email"]
             print "Attempting to validate user with the given token..."
             query = json.loads(database_helper.get_user_data_by_token(token))
             print "Active users are: '" + json.dumps(active_users.keys()) + "'."
