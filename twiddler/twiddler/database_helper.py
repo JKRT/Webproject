@@ -1,4 +1,4 @@
-7#Function to access and control the database , used by server to access the database
+#Function to access and control the database , used by server to access the database
 
 import sqlite3
 import json

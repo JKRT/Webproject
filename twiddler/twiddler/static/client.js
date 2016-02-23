@@ -88,7 +88,7 @@ function checkLogin() {
                 //Save the token in the browser...
                 sessionStorage.token = signInObject.data;
                 // Initiate socket connection here...
-                tsocket = new TwiddlerSocket(email, sessionStorage.token);
+		tsocket = new TwiddlerSocket(email, sessionStorage.token);
                 console.log("Now waiting for socket response...");
                 displayView();
             }
@@ -303,13 +303,7 @@ function changePassword() {
     return false;
 } 
 
-/* Chrome doesn't handle onclose on the WebSocket
- * properly, instead log user out when page is reloaded. */
-window.onbeforeunload = function() {
-    sessionStorage.removeItem("token");
-    displayView(); // Welcome view?
-};
-
 window.onload = function() {
+    tsocket = new TwiddlerSocket(null, sessionStorage.token);
     displayView();
 };

@@ -9,14 +9,6 @@ import database_helper
 
     #active users should contain the websocket and the email adress or something like that
 active_users = dict()
-@app.route('/example')
-def example():
-    if request.environ.get('wsgi.websocket'):
-        ws = request.environ['wsgi.websocket']
-        while True:
-            message = ws.receive()
-            ws.send(message)
-        return                
 
 def bound_email(socket):
     for k, v in active_users.items():
@@ -47,7 +39,9 @@ def websocket():
             print "Message received with contents '" + message + "'."
 
             message = json.loads(message)
-            email = message["email"] ; token = message["token"]
+            token = message["token"]
+            email = json.loads(database_helper.get_user_data_by_token(token))["email"]
+            
             print "Attempting to validate user with the given token..."
             query = json.loads(database_helper.get_user_data_by_token(token))
             print "Active users are: '" + json.dumps(active_users.keys()) + "'."
@@ -63,7 +57,7 @@ def websocket():
                 print "Closing all active sockets of user..."
                 #Ta bort alla hans tokens fy fan.
                 database_helper.sign_out_all(email,token)
-                active_users[email].close()
+                active_users[email].send("close")
                 active_users[email] = ws
                 print "User has now the current socket session!"
             elif email not in active_users:

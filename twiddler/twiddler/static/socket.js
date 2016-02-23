@@ -9,17 +9,25 @@ TwiddlerSocket = function(email, token) {
     handle.onopen = function(event) {
         console.log("Twiddler WebSocket has opened!");
         console.log("Sending token and email, hoping to gain access...");
-        data = {email: userEmail, token: userToken};
+	if(userEmail != null)
+            data = {email: userEmail, token: userToken};
+	else 
+	    data = {token:userToken};
         handle.send(JSON.stringify(data));
     };
 
     this.close = function() { 
 	handle.close(); 
     };
-    handle.onclose = function(event) {
-        console.log("Twiddler WebSocket has closed, oh no!");
-        console.log("Logging user out of application...");
-        sessionStorage.removeItem("token");
-        displayView(); // Welcome view?
+
+    handle.onmessage = function(event) {
+	if( event.data === "close" ) {
+	    console.log("Logging user out of application...");
+	    sessionStorage.removeItem("token");
+	    displayView(); // Welcome view?
+	}
     };
 };
+
+
+
