@@ -110,6 +110,7 @@ function showHome() {
     document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
+    document.getElementById("chartPanel").style.display = "none";
 
     var userData = null;
     var xhttp = new XMLHttpRequest();
@@ -172,6 +173,7 @@ function showAccount() {
     document.getElementById("chatPanel").style.display = "none";
     document.getElementById("chatBoxPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
+    postsPerDay();
 }
 
 function browseUsers(reload){
@@ -229,6 +231,7 @@ function showBrowse(reload) {
     document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "block";
+    document.getElementById("chartPanel").style.display = "none";
     document.getElementById("email3").value = sessionStorage.currentlyViewing;
     browseUsers(reload);
 }
