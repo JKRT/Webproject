@@ -2,9 +2,6 @@
  * 
  */
 
-
-
-
 function displayView() {
     console.log("Display view called");
     if(sessionStorage.token)  {
@@ -30,6 +27,7 @@ function displayView() {
  then be used , I have not decided yet what the wildcard should do*/
 
 initPages = function() {
+    this.refresh = true;
     page("/Welcome", function(){
 	console.log("/welcome in initPages called");
 	showWelcome();
@@ -47,7 +45,7 @@ initPages = function() {
 
     page("/Browse", function() {
 	console.log("/browse in initPages called");
-	showBrowse(false);
+	showBrowse(refresh);
     });
 
      page("*", function() {
@@ -67,19 +65,23 @@ function saveStateAndRedirect(action){
     case "Welcome":
 	page.redirect("/Welcome");
 	stateObj = {name:"Welcome"};
+    sessionStorage.currentlyViewing = ""
 	name = "Welcome";
 	break;
     case "Home":
 	page.redirect("/Home");
-	stateObj = {name:"Welcome"};
+	stateObj = {name:"Home"};
+    sessionStorage.currentlyViewing = ""
 	name = "Home";
 	break;
     case "Account":
 	page.redirect("/Account");
 	stateObj = {name:"Account"};
+    sessionStorage.currentlyViewing = ""
 	name = "Account";
 	break;
     case "Browse": 
+    initPages.refresh = false;
 	page.redirect("/Browse");
 	stateObj = {name:"Browse"};
 	name = "Browse";
@@ -175,8 +177,12 @@ function showAccount() {
 function browseUsers(reload){
     console.log("browseUsers called");
     var email = null;
-    if (reload) email = currentlyViewing;
-    else email = document.getElementById("email3").value;
+    if (reload) 
+        email = sessionStorage.currentlyViewing;
+    else { 
+        email = document.getElementById("email3").value;
+        sessionStorage.currentlyViewing = email;
+    }
     var userData = null;
     var xhttp = new XMLHttpRequest();
 
@@ -202,7 +208,7 @@ function browseUsers(reload){
 		var email3 = document.getElementById("email3");
                 email3.setCustomValidity("User doesn't exist!");
 	    } else {
-		currentlyViewing = document.getElementById("email3").value;
+		// sessionStorage.currentlyViewing = document.getElementById("email3").value;
 		initHome(userData);
 	    }
         }
@@ -223,5 +229,6 @@ function showBrowse(reload) {
     document.getElementById("chatBoxPanel").style.display = "block";
     document.getElementById("accountPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "block";
+    document.getElementById("email3").value = sessionStorage.currentlyViewing;
     browseUsers(reload);
 }

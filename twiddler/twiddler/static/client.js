@@ -118,7 +118,7 @@ function postMessage() {
     var recipient = null;
     if(currentView === showBrowse ) {
         // recipient = document.getElementById("email3").value;
-	recipient = currentlyViewing;
+	recipient = sessionStorage.currentlyViewing;
 	console.log(recipient);
     } else if (currentView === showHome) {
 	//set recipient to the user "hack"..
@@ -148,7 +148,6 @@ function postMessage() {
             reloadMessages();
         }
     };
-
 }
 
 function changePassword() {

@@ -50,6 +50,7 @@ def websocket():
                 #The case when we recieve a message without contents. 
                 print "Keeping the conncetion alive"
                 ws.send("Keeping the dream alive")
+                ws.close()
                 return json.dumps({"success": True,
                                    "message": "Socket is kept alive"})
 
@@ -212,14 +213,12 @@ def post_message(token = None, message = None, email = None, media = None):
             try:
                 media_tag = ""
                 media_path = "media/" + filename
-                print filename[-3:]
-                print ALLOWED_EXTENSIONS[:2]
                 if filename[-3:] in ALLOWED_EXTENSIONS[:2]:
-                    media_tag = "<img src='" + media_path + "'width=290'>"
+                    media_tag = "<img src='" + media_path + "' width=290>"
                 elif filename[-3:] in ALLOWED_EXTENSIONS[-2:]:
                     mp4_source = "<source src='" + media_path + "' type='video/mp4'>"
                     ogg_source = "<source src='" + media_path + "' type='video/ogg'>"
-                    media_tag = "<video controls>" + mp4_source + ogg_source + "</video>"
+                    media_tag = "<video width=290 controls>" + mp4_source + ogg_source + "</video>"
                 message = media_tag + message + "<br>"
             except:
                 pass
@@ -232,13 +231,6 @@ def post_message(token = None, message = None, email = None, media = None):
         return json.dumps({"success": False, "message": "You are not signed in."})
     else: 
         return database_helper.post_message(token, message, email)
-
-# @app.route('/media/<filename>')
-# def transfer_media_file(filename):
-#     print "Get '{}'".format(filename)
-#     print "From '{}'".format(app.config['UPLOAD_FOLDER'])
-#     media_file = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-#     return media_file
 
 if __name__ == '__main__':
     #app.run(debug=True)
