@@ -171,6 +171,7 @@ function changePassword() {
 
 window.onload = function() {
     tsocket = new TwiddlerSocket(null, sessionStorage.token);
+    msocket = new liveDataSocket();
     initPages();
     displayView();
 };

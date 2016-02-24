@@ -1,4 +1,5 @@
 tsocket = null;
+msocket = null;
 TwiddlerSocket = function(email, token) {
     var userEmail = email;
     var userToken = token;
@@ -30,10 +31,13 @@ TwiddlerSocket = function(email, token) {
 };
 
 
-liveDataSocket = function(email, token) {
-    var postPerDayCtx = document.getElementById("activeUsersCanvas").getContext("2d");
-    //var handle = new WebSocket("ws://localhost:7777/websocket");
-    var data = this.data = {
+liveDataSocket = function() {
+    console.log("Connecting to liveDataSocket...");
+    var handle = new WebSocket("ws://localhost:7777/media_socket");
+    // Todo move this accordingly
+    //var postPerDayCtx = document.getElementById("activeUsersCanvas").getContext("2d");
+    //this.myBarChart = new Chart(ctx).Bar(this.data, options);
+    var postPerDayData = {
 	labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 	datasets: [
             {
@@ -42,17 +46,51 @@ liveDataSocket = function(email, token) {
 		strokeColor: "rgba(220,220,220,0.8)",
 		highlightFill: "rgba(400,220,220,0.75)",
 		highlightStroke: "rgba(220,220,220,1)",
-		data: [65, 59, 80, 81, 56, 55, 40]
+		data: [0, 0, 0, 0, 0, 0, 0]
             }
 	]
     };
 
-    console.log("Connecting to liveDataSocket...");
+   var postRatioData = [
+	{
+            value: 0,
+            color:"#F7464A",
+            highlight: "#FF5A5E",
+            label: "Red"
+	},
+	{
+            value: 0,
+            color: "#FDB45C",
+            highlight: "#FFC870",
+            label: "Yellow"
+	}
+    ];
+
+    var genderRatioData = [
+	{
+            value: 0,
+            color:"#F7464A",
+            highlight: "#FF5A5E",
+            label: "Red"
+	},
+	{
+            value: 0,
+            color: "#46BFBD",
+            highlight: "#5AD3D1",
+            label: "Green"
+	},
+	{
+            value: 0,
+            color: "#FDB45C",
+            highlight: "#FFC870",
+            label: "Yellow"
+	}
+    ];
+
     console.log("State of liveDataSocket connection is '" + handle.readyState + "'.");
 
     handle.onopen = function(event) {
         console.log("Live data socket has opened!");
-	this.myBarChart = new Chart(ctx).Bar(this.data, options);
     };
 
     this.close = function() { 
