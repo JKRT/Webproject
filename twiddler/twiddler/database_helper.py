@@ -22,19 +22,19 @@ class Database:
 def generate_hash(password):
     return hashlib.sha256(password).hexdigest()
 
-def valid_token(email, token, message):
+def valid_token(email, hmact, message):
     with Database() as cursor:
         cursor.execute("SELECT id from users WHERE email=?", (email,))
         user_id = cursor.fetchone()
         if user_id == None:
-            return False
+            return None
         user_id = user_id[0]
 
         candidate_tokens = cursor.execute("SELECT id FROM tokens WHERE user_id=?", (user_id,))
         for candidate_token in candidate_tokens:
             h = hmac.new(str(candidate_token[0]), str(message), hashlib.sha1)
-            if str(token) == h.hexdigest(): return True
-        return False
+            if str(hmact) == h.hexdigest(): return str(candidate_token[0])
+        return None
 
 def get_user_id(cursor, token):
     cursor.execute("SELECT user_id FROM tokens WHERE id=?", (token,))

@@ -148,7 +148,7 @@ def change_password(token = None, old_password=None ,new_password=None):
     old_password = request.form['oldPassword']
     new_password = request.form['newPassword']
     token = request.form['token']
-    
+
     #Initial handling before talking to the database.
     if old_password == None or new_password == None or token == None:
         return json.dumps({"success": False, "message": "You are not logged in."})

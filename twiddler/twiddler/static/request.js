@@ -1,4 +1,7 @@
 TwiddlerRequest = function(type, route, messages, handler) {
+    salt = Math.random().toString(36).substr(2, 16);
+    var token = new TwiddlerToken(sessionStorage.token);
+
     if (type == "POST") {
         var form = new FormData();
         for (var message in messages) {
@@ -6,12 +9,23 @@ TwiddlerRequest = function(type, route, messages, handler) {
                 form.append(message, messages[message]);
             }
         }
+
+        if (route != "/sign_in"
+            || route != "/sign_up") {
+            form.append("salt", salt);
+            form.append("hmac", token.generate(salt));
+        }
     } else if (type == "GET") {
         var url = "?";
         for (var message in messages) {
             if (messages.hasOwnProperty(message)) {
                 url += message + "=" + messages[message] + "&";
             }
+        }
+        if (route != "/sign_in"
+            || route != "/sign_up") {
+            url += "salt=" + salt + "&";
+            url += "hmac=" + token.generate(salt);
         }
     }
 
