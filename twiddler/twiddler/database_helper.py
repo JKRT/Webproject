@@ -4,6 +4,7 @@ import sqlite3
 import json
 import uuid
 import hashlib
+import datetime
 from time import localtime, strftime
 
 class Database:
@@ -175,3 +176,84 @@ def sign_out_all(email, token):
 
 def generate_token():
     return str(uuid.uuid4()).replace('-', '')
+
+def get_post_statistics(token):
+    with Database() as cursor:
+        user_id = get_user_id(cursor,token)
+        cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
+        
+        if cursor.fetchone() == None:
+            return json.dumps( {"success": False, "message": "You are not signed in."})
+        cursor.execute("SELECT sent_date FROM messages")
+        post_per_day_data = []
+        
+        if cursor.fetchone() == None:
+            return json.dumps( {"success": False, "message": "Database error"})
+        else:
+            data_cursor = cursor.fetchone()
+          
+            for row in data_cursor:
+                data.append(row);
+            post_per_day_data = get_weekday_stats(data)
+
+        #Get post ratio data from the user
+        post_ratio_data = []
+        cursor.execute("SELECT COUNT(*) FROM messages where sender_id=?",(sender_id,) )
+        sent = cursor.fetchone()
+        cursor.execute("SELECT COUNT(*) FROM messages where recipient_id=?",(sender_id,) )
+        recieved = cursor.fetchone()
+        post_ratio_data.append(sent)
+        post_ratio_data.append(recieved)
+        print post_ratio_data
+        total_data = {"postData": [post_ratio_data,post_per_day_data] }
+        return json.dumps(total_data)
+
+
+def get_gender_statistics(token):
+    with Database() as cursor:
+        user_id = get_user_id(cursor,token)
+        cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
+        
+        if cursor.fetchone() == None:
+            return json.dumps( {"success": False, "message": "You are not signed in."})
+        
+        cursor.execute("select COUNT(*) from users where gender='male'");
+        males = cursor.fetchone()
+        cursor.execute("select COUNT(*) from users where gender='hen'");
+        hens = cursor.fetchone()
+        cursor.execute("select COUNT(*) from users where gender='female'");
+        females = cursor.fetchone()
+        data = {"genderStatistics": [males[0],hens[0],females[0]] }
+        
+        return json.dumps(data)
+
+
+#Converts date data into date statistics. 
+def get_weekday_stats(data):
+    for row in data:
+        row = row.split()[0]
+        row = row.split('-')
+    for row in data:
+        row = datetime.datetime(row[0], row[1], row[2]).weekday()
+    
+    weekdays = [mon , tue  , wen  ,thu  ,fri ,sat  , sun ]
+    for day in weekdays:
+        day = 0
+    
+    for row in data:
+        if row == 1:
+            weekdays.mon += 1
+        elif row == 2:
+            weekdays.tue += 1
+        elif row == 3:
+            weekdays.wen += 1
+        elif row == 4:
+            weekdays.thu += 1
+        elif row == 5:
+            weekdays.fri += 1
+        elif row == 6:
+            weekdays.sat += 1
+        elif row == 7:
+            weekdays.sun += 1
+    return weekdays
+

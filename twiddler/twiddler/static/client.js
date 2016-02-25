@@ -9,6 +9,8 @@ currentlyViewing = "";
  */
 function checkSignUp() {
     console.log("Called checkSignUp()");
+    console.log("Updating user statistics");
+    msocket.updateGenderRatio();
     if(document.getElementById("password2").value === document.getElementById("repeatPsw").value) {
         var dataObject = {email: document.getElementById("email2").value,
 			  password: document.getElementById("password2").value,

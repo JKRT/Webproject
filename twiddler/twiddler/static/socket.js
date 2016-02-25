@@ -35,8 +35,48 @@ liveDataSocket = function() {
     console.log("Connecting to liveDataSocket...");
     var handle = new WebSocket("ws://localhost:7777/media_socket");
     // Todo move this accordingly
-    //var postPerDayCtx = document.getElementById("activeUsersCanvas").getContext("2d");
-    //this.myBarChart = new Chart(ctx).Bar(this.data, options);
+    this.postPerDayCtx = null; //document.getElementById("activeUsersCanvas").getContext("2d");
+    this.myBarChart = null; //new Chart(ctx).Bar(this.data, options);
+
+    /*Updates post data and generates a graph*/
+    this.updatePostData = function (userToken) {
+	console.log("Called updatePostRatio");
+	data = {token: userToken, message:"post"};
+	handle.send( JSON.stringify(data));
+    };
+    /*Updates gender ratio and renders the pie-chart */
+    this.updateGenderRatio = function (userToken) { 
+	console.log("Called updateGenderRatio");
+	data = {token: userToken, message:"signup"};
+	handle.send(JSON.stringify(data));
+    };
+
+    console.log("State of liveDataSocket connection is '" + handle.readyState + "'.");
+
+    handle.onopen = function(event) {
+        console.log("Live data socket has opened!");
+    };
+
+    this.close = function() { 
+	console.log("Live data socket has closed!");
+	handle.close(); 
+    };
+
+    handle.onmessage = function(event) {
+	console.log("Live data socket recieved message:" + event.data);
+	data = event.data;
+	//riktigt fult..
+	if(data.replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "genderStatistics") {
+	    console.log(genderRatioData);
+	    for ( i = 0; i < 0; ++i ) {
+		console.log(i);
+	    } 
+	} else if(data.replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "postData") {
+	    
+	}
+
+    };
+  
     var postPerDayData = {
 	labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 	datasets: [
@@ -87,21 +127,6 @@ liveDataSocket = function() {
 	}
     ];
 
-    console.log("State of liveDataSocket connection is '" + handle.readyState + "'.");
-
-    handle.onopen = function(event) {
-        console.log("Live data socket has opened!");
-    };
-
-    this.close = function() { 
-	console.log("Live data socket has closed!");
-	handle.close(); 
-    };
-
-    handle.onmessage = function(event) {
-	console.log("Live data socket recieved message");
-	
-    };
 };
 
 postPerDayoptions = {

@@ -7,6 +7,7 @@ import json
 import uuid
 import database_helper
 
+
 #active users should contain the websocket and the email adress
 active_users = dict()
 def bound_email(socket):
@@ -89,6 +90,40 @@ def websocket():
     print "Seems we got out of the loop? Wat?"
     return json.dumps({"success": True,
            "message": "Successfully linked socket with user! Yay!"})
+
+@app.route('/media_socket')
+def media_socket():
+    print "Client request recieved @media_socket"
+    if request.environ.get('wsgi.websocket'):
+        ws = request.environ['wsgi.websocket']
+        print "media_socket bound between client and server!"
+    else:
+        return json.dumps({"success": False,
+                           "message": "Failed to bind socket!"})
+    while True:
+        print "Waiting..."
+        print "Preparing to send data to the server"
+        token = "" 
+        message = ws.receive()
+        message = json.loads(message)
+        if message == None:
+            print "Recieved empty message"
+        else:
+            print message
+            token = message["token"]
+        #Check to see what update should be sent back to the client
+        if message["message"] == "post":
+            print "Return post data from the database"
+        elif message["message"] == "signup":
+            print "Fetching signup related data"
+            data = database_helper.get_gender_statistics(token)
+            print data
+            ws.send(data)
+        elif message["message"] == "post":
+            print "Fetching post related statistics"
+
+    return json.dumps({"success": True,
+                       "message": "Socket closing down!"})
 
 @app.route('/', methods=['GET'])
 def index():
