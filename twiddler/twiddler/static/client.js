@@ -95,6 +95,7 @@ function loginHandler(response) {
     } else {
         //Save the token in the browser...
         sessionStorage.token = signInObject.data;
+        sessionStorage.email = email; // For HMAC.
         // Initiate socket connection here...
         tsocket = new TwiddlerSocket(email, sessionStorage.token);
         console.log("Now waiting for socket response...");
@@ -108,7 +109,7 @@ function logout() {
     console.log("logout() called");
 
     var message = {
-        "token": sessionStorage.token
+        "email": sessionStorage.email
     };
 
     var request = new TwiddlerRequest("POST", "/sign_out",
@@ -154,7 +155,7 @@ function postMessage() {
     var mediaObject = document.getElementById("mediaBrowser");
 
     var message = {
-        "token": sessionStorage.token,
+        "semail": sessionStorage.email,
         "message": messageContent.value,
         "email": recipient
     };
@@ -191,7 +192,7 @@ function changePassword() {
     var message = {
         "oldPassword": document.getElementById("oldPassword").value,
         "newPassword": document.getElementById("newPassword").value,
-        "token": sessionStorage.token
+        "email": sessionStorage.email,
     };
 
     var request = new TwiddlerRequest("POST", "/change_password",

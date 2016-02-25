@@ -113,7 +113,7 @@ function showHome() {
 
     var userData = null;
     var message = {
-        "token": sessionStorage.token
+        "email": sessionStorage.email
     };
 
     var request = new TwiddlerRequest("GET", "/get_user_data_by_token",
@@ -141,8 +141,8 @@ function initHome(userData) {
     writeToHome("homeCountry" ,  userData.data.country, "Country: ");
 
     var message = {
-        "token": sessionStorage.token,
-        "email": userData.data.email
+        "email": userData.data.email,
+        "semail": sessionStorage.email
     };
 
     var request = new TwiddlerRequest("GET", "/get_user_messages_by_email",
@@ -184,8 +184,8 @@ function browseUsers(reload){
     }
 
     var message = {
-        "token": sessionStorage.token,
-        "email": email
+        "email": email,
+        "semail": sessionStorage.email
     };
 
     /* Data is provided in the actual URL (since we are doing a GET request).
