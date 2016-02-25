@@ -171,19 +171,23 @@ def sign_up( email = None, password = None, first_name = None ,
                                    , input_dict["city"] , input_dict["country"])
 
 @app.route('/sign_out', methods=['POST'])
-def sign_out(token = None):
-    token = request.form['token'] 
-    if token == None: 
+def sign_out(email = None, hmac = None, salt = None):
+    email = request.form['email'] # Note, token is not required.
+    hmac = request.form['hmac'] ; salt = request.form['salt']
+    token = database_helper.valid_token(email, hmac, salt)
+    if token == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
     return database_helper.sign_out(token)
 
 
 @app.route('/change_password' , methods=['POST'])
-def change_password(token = None, old_password=None ,new_password=None):
+def change_password(old_password=None, new_password=None, email=None, hmac=None, salt=None):
     old_password = request.form['oldPassword']
     new_password = request.form['newPassword']
-    token = request.form['token']
-    
+    email = request.form['email'] # Note, token is not required.
+    hmac = request.form['hmac'] ; salt = request.form['salt']
+    token = database_helper.valid_token(email, hmac, salt)
+
     #Initial handling before talking to the database.
     if old_password == None or new_password == None or token == None:
         return json.dumps({"success": False, "message": "You are not logged in."})
@@ -191,34 +195,43 @@ def change_password(token = None, old_password=None ,new_password=None):
         return database_helper.change_password(token,old_password, new_password)
 
 @app.route('/get_user_data_by_token' , methods=['GET'])
-def get_user_data_by_token(token = None):
-    token = request.args.get('token', '');
+def get_user_data_by_token(email = None, hmac = None, salt = None):
+    email = request.args.get('email', '') # Note, token is not required.
+    hmac = request.args.get('hmac', '') ; salt = request.args.get('salt', '')
+    token = database_helper.valid_token(email, hmac, salt)
+
     if token == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
     return database_helper.get_user_data_by_token(token)
 
 @app.route('/get_user_data_by_email', methods=['GET'])
-def get_user_data_by_email(token = None , email = None):
-    token = request.args.get('token', '');
+def get_user_data_by_email(email = None, semail = None, hmac = None, salt = None):
     email = request.args.get('email', '');
+    semail = request.args.get('semail', '') # Note, token is not required.
+    hmac = request.args.get('hmac', '') ; salt = request.args.get('salt', '')
+    token = database_helper.valid_token(semail, hmac, salt)
 
     if token == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
     return database_helper.get_user_data_by_email(token, email)
 
 
-@app.route('/get_user_messages_by_token' , methods=['POST'])
-def get_user_messages_by_token(token = None): 
-    token = request.form['token']
+@app.route('/get_user_messages_by_token' , methods=['GET'])
+def get_user_messages_by_token(email = None, hmac = None, salt = None):
+    email = request.args.get('email', '') # Note, token is not required.
+    hmac = request.args.get('hmac', '') ; salt = request.args.get('salt', '')
+    token = database_helper.valid_token(email, hmac, salt)
 
     if token == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
     return database_helper.get_user_messages_by_token(token)
 
 @app.route('/get_user_messages_by_email' , methods=['GET'])
-def get_user_messages_by_email(token = None, email = None): 
-    token = request.args.get('token', '');
+def get_user_messages_by_email(email = None, semail = None, hmac = None, salt = None):
     email = request.args.get('email', '');
+    semail = request.args.get('semail', '') # Note, token is not required.
+    hmac = request.args.get('hmac', '') ; salt = request.args.get('salt', '')
+    token = database_helper.valid_token(semail, hmac, salt)
 
     if token == None or email == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
@@ -230,11 +243,14 @@ def valid_media(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in set(ALLOWED_EXTENSIONS)
 
 @app.route('/post_message',methods = ['POST'])
-def post_message(token = None, message = None, email = None, media = None):
-    token = request.form['token']
+def post_message(message = None, media = None, email = None, semail = None, hmac = None, salt = None):
     message = request.form['message']
-    email = request.form['email']
     media = request.files.get('media')
+    email = request.form['email']
+
+    semail = request.form['semail'] # Note, token is not required.
+    hmac = request.form['hmac'] ; salt = request.form['salt']
+    token = database_helper.valid_token(semail, hmac, salt)
 
     if media != None:
         if valid_media(media.filename):

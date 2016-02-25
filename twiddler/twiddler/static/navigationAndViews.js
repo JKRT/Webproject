@@ -113,21 +113,21 @@ function showHome() {
     document.getElementById("chartPanel").style.display = "none";
 
     var userData = null;
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "/get_user_data_by_token?t=" + Math.random() + "&token=" + sessionStorage.token, true);
-    xhttp.send(); // Data is provided in the actual URL (since we are doing a GET request).
+    var message = {
+        "email": sessionStorage.email
+    };
+
+    var request = new TwiddlerRequest("GET", "/get_user_data_by_token",
+                                      message, showHomeHandler);
+    request.send(); // Data is provided in the actual URL (since we are doing a GET request).
     // Reasoning to add 't' in the url with a random value is that the brower might cache the page,
     // which is unreasonable since the provided data is dynamic and can't really be cached.
-
-    xhttp.onreadystatechange = function() {
-        // Waiting for request to finish, 4 when response is ready.
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-            userData = JSON.parse(xhttp.responseText);
-            initHome(userData);
-        }
-    };
 }
 
+function showHomeHandler(response) {
+    var userData = JSON.parse(response);
+    initHome(userData);
+}
 
 function initHome(userData) {
     console.log("called initHome");
@@ -141,27 +141,26 @@ function initHome(userData) {
     writeToHome("homeCity" , userData.data.city, "City: ");
     writeToHome("homeCountry" ,  userData.data.country, "Country: ");
 
+    var message = {
+        "email": userData.data.email,
+        "semail": sessionStorage.email
+    };
 
-    var messageData = null;
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "/get_user_messages_by_email?t=" + Math.random() +
-                      "&token=" + sessionStorage.token +
-                      "&email=" + userData.data.email, true);
-    xhttp.send(); // Data is provided in the actual URL (since we are doing a GET request).
+    var request = new TwiddlerRequest("GET", "/get_user_messages_by_email",
+                                      message, initHomeHandler);
+    request.send(); // Data is provided in the actual URL (since we are doing a GET request).
     // Reasoning to add 't' in the url with a random value is that the brower might cache the page,
     // which is unreasonable since the provided data is dynamic and can't really be cached.
+}
 
-    xhttp.onreadystatechange = function() {
-        // Waiting for request to finish, 4 when response is ready.
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-            messageData = JSON.parse(xhttp.responseText);
-            var chatLog = "";
-            for (var message of messageData.data) {
-                chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
-	    }
-            document.getElementById("chatPanel").innerHTML = chatLog;
-        }
-    };
+function initHomeHandler(response) {
+    var messageData = JSON.parse(response);
+    var chatLog = "";
+    for (var message of messageData.data) {
+        chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
+    }
+
+    document.getElementById("chatPanel").innerHTML = chatLog;
 }
 
 function showAccount() {
@@ -179,44 +178,39 @@ function showAccount() {
 function browseUsers(reload){
     console.log("browseUsers called");
     var email = null;
-    if (reload) 
+    if (reload)
         email = sessionStorage.currentlyViewing;
-    else { 
+    else {
         email = document.getElementById("email3").value;
         sessionStorage.currentlyViewing = email;
     }
-    var userData = null;
-    var xhttp = new XMLHttpRequest();
 
-    if(email === "") {
-	return false;
-    }
+    var message = {
+        "email": email,
+        "semail": sessionStorage.email
+    };
 
     /* Data is provided in the actual URL (since we are doing a GET request).
      *   Reasoning to add 't' in the url with a random value is that the brower might cache the page,
      *    which is unreasonable since the provided data is dynamic and can't really be cached.
      */
-    xhttp.open("GET", "/get_user_data_by_email?t=" + 
-	       Math.random() +
-               "&token=" + sessionStorage.token +
-               "&email=" + email, true);
-    xhttp.send(); 
 
-    xhttp.onreadystatechange = function() {
-        // Waiting for request to finish, 4 when response is ready.
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-            userData = JSON.parse(xhttp.responseText);
-	    if(!userData.success){
-		var email3 = document.getElementById("email3");
-                email3.setCustomValidity("User doesn't exist!");
-	    } else {
-		// sessionStorage.currentlyViewing = document.getElementById("email3").value;
-		initHome(userData);
-	    }
-        }
-    };
-
+    if (email === "") return false;
+    var request = new TwiddlerRequest("GET", "/get_user_data_by_email",
+                                      message, browseUsersHandler);
+    request.send();
     return false;
+}
+
+function browseUsersHandler(response) {
+    var userData = JSON.parse(response);
+    if(!userData.success){
+        var email3 = document.getElementById("email3");
+        email3.setCustomValidity("User doesn't exist!");
+    } else {
+        // sessionStorage.currentlyViewing = document.getElementById("email3").value;
+        initHome(userData);
+    }
 }
 
 /* 
