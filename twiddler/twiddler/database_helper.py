@@ -221,6 +221,7 @@ def get_post_statistics(token):
         post_ratio_data.append(recieved)
         print post_ratio_data
         total_data = {"postData": [post_ratio_data,post_per_day_data] }
+        print "total data is:" + total_data
         return json.dumps(total_data)
 
 

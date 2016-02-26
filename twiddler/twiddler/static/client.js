@@ -210,7 +210,7 @@ function changePasswordHandler(response) {
 
 window.onload = function() {
     tsocket = new TwiddlerSocket(null, sessionStorage.token);
-    msocket = new liveDataSocket();
+    lsocket = new liveDataSocket();
     initPages();
     displayView();
 };

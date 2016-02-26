@@ -35,7 +35,7 @@ liveDataSocket = function() {
     console.log("Connecting to liveDataSocket...");
     var handle = new WebSocket("ws://localhost:7777/media_socket");
     // Todo move this accordingly
-    this.postPerDayCtx = null; //document.getElementById("activeUsersCanvas").getContext("2d");
+    this.ctx = null; //document.getElementById("activeUsersCanvas").getContext("2d");
     this.myBarChart = null; //new Chart(ctx).Bar(this.data, options);
 
     /*Updates post data and generates a graph*/
@@ -63,20 +63,28 @@ liveDataSocket = function() {
     };
 
     handle.onmessage = function(event) {
-	console.log("Live data socket recieved message:" + event.data);
-	data = event.data;
+	data = JSON.parse(event.data);
+	console.log("Live data socket recieved message:" + data);
 	//riktigt fult..
-	if(data.replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "genderStatistics") {
-	    console.log(genderRatioData);
-	    for ( i = 0; i < 0; ++i ) {
-		console.log(i);
-	    } 
-	} else if(data.replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "postData") {
-	    
+	if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "genderStatistics") {
+	    console.log("Updating gender data");
+	    for ( i = 0; i < 3; ++i ) {
+		genderRatioData[i].value = data.genderStatistics[i];
+	    }
+	    console.log("Gender statistics updated");
+	} else if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "postData" ) {        console.log("Updating post related data" + data);
+															  
 	}
 
     };
   
+    this.renderGenderChart = function () {
+	if (currentView.name == "showAccount") {
+	    var ctx = document.getElementById("genderBalanceCanvas").getContext("2d");
+	    var myBarChart = new Chart(ctx).Pie(genderRatioData, chartOptions);
+	}
+    };
+
     var postPerDayData = {
 	labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 	datasets: [
@@ -111,19 +119,19 @@ liveDataSocket = function() {
             value: 0,
             color:"#F7464A",
             highlight: "#FF5A5E",
-            label: "Red"
+            label: "Men"
 	},
 	{
             value: 0,
             color: "#46BFBD",
             highlight: "#5AD3D1",
-            label: "Green"
+            label: "Gender-neutral"
 	},
 	{
             value: 0,
             color: "#FDB45C",
             highlight: "#FFC870",
-            label: "Yellow"
+            label: "Women"
 	}
     ];
 
@@ -166,3 +174,32 @@ postPerDayoptions = {
 };
 
 
+chartOptions = {
+    //Boolean - Whether we should show a stroke on each segment
+    segmentShowStroke : true,
+
+    //String - The colour of each segment stroke
+    segmentStrokeColor : "#fff",
+
+    //Number - The width of each segment stroke
+    segmentStrokeWidth : 2,
+
+    //Number - The percentage of the chart that we cut out of the middle
+    percentageInnerCutout : 50, // This is 0 for Pie charts
+
+    //Number - Amount of animation steps
+    animationSteps : 1000,
+
+    //String - Animation easing effect
+    animationEasing : "easeOutBounce",
+
+    //Boolean - Whether we animate the rotation of the Doughnut
+    animateRotate : true,
+
+    //Boolean - Whether we animate scaling the Doughnut from the centre
+    animateScale : false,
+
+    //String - A legend template
+    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+
+};

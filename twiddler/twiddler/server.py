@@ -121,6 +121,9 @@ def media_socket():
             ws.send(data)
         elif message["message"] == "post":
             print "Fetching post related statistics"
+            data = database_helper.get_post_statistics(token)
+            print data
+            ws.send(data);
 
     return json.dumps({"success": True,
                        "message": "Socket closing down!"})

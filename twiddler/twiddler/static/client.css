@@ -171,3 +171,7 @@ button.chatButton {
     width: 590px;
     margin-top: -45px;
 }
+
+div.genderBalanceChart {
+    text-align: right;
+}
