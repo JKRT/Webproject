@@ -241,6 +241,7 @@ def get_gender_statistics(token):
         return json.dumps(data)
 
 
+
 #Converts date data into date statistics. 
 def get_weekday_stats(data):
     print "get_weekday_stats"
@@ -261,20 +262,19 @@ def get_weekday_stats(data):
     weekdays = [0 , 0  , 0  , 0  , 0  ,  0  , 0 ]
 
     for row in data_set:
-        if row == 1:
+        if row == 0:
             weekdays[0] += 1
-        elif row == 2:
+        elif row == 1:
             weekdays[1] += 1
-        elif row == 3:
+        elif row == 2:
             weekdays[2] += 1
-        elif row == 4:
+        elif row == 3:
             weekdays[3] += 1
-        elif row == 5:
+        elif row == 4:
             weekdays[4] += 1
-        elif row == 6:
+        elif row == 5:
             weekdays[5] += 1
-        elif row == 7:
+        elif row == 6:
             weekdays[6] += 1
     
     return weekdays
-

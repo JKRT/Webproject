@@ -115,7 +115,6 @@ def media_socket():
         if message["message"] == "post":
             print "Fetching post related statistics"
             data = database_helper.get_post_statistics(token)
-            print "hoochy mama"
             print data
             ws.send(data);
             

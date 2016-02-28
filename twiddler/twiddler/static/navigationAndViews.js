@@ -6,6 +6,7 @@ function displayView() {
     console.log("Display view called");
     if(sessionStorage.token)  {
 	console.log("Trying to fetch the home view");
+	lsocket.initData(sessionStorage.token);
 	switch(currentView.name) {
 	case "showHome":
 	    saveStateAndRedirect("Home");
@@ -65,19 +66,19 @@ function saveStateAndRedirect(action){
     case "Welcome":
 	page.redirect("/Welcome");
 	stateObj = {name:"Welcome"};
-    sessionStorage.currentlyViewing = ""
+	sessionStorage.currentlyViewing = "";
 	name = "Welcome";
 	break;
     case "Home":
 	page.redirect("/Home");
 	stateObj = {name:"Home"};
-    sessionStorage.currentlyViewing = ""
+	sessionStorage.currentlyViewing = "";
 	name = "Home";
 	break;
     case "Account":
 	page.redirect("/Account");
 	stateObj = {name:"Account"};
-    sessionStorage.currentlyViewing = ""
+	sessionStorage.currentlyViewing = "";
 	name = "Account";
 	break;
     case "Browse": 
@@ -172,7 +173,9 @@ function showAccount() {
     document.getElementById("chatPanel").style.display = "none";
     document.getElementById("chatBoxPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
-    postsPerDay();
+    lsocket.renderPostRatioChart();
+    lsocket.renderGenderChart();
+    lsocket.renderPostPerDayChart();
 }
 
 function browseUsers(reload){

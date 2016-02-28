@@ -55,6 +55,7 @@ liveDataSocket = function() {
 
     handle.onopen = function(event) {
         console.log("Live data socket has opened!");
+	/*Set up existing data */
     };
 
     this.close = function() { 
@@ -62,8 +63,14 @@ liveDataSocket = function() {
 	handle.close(); 
     };
 
+    this.initData = function(token) {
+    	console.log("Called init data");
+    	this.updatePostData(token);
+    	this.updateGenderRatio(token);
+    };
+
     handle.onmessage = function(event) {
-	hoochymama = data = JSON.parse(event.data);
+	data = JSON.parse(event.data);
 	console.log("Live data socket recieved message:" + data);
 	//riktigt fult..
 	if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "genderStatistics") {
@@ -80,7 +87,7 @@ liveDataSocket = function() {
 	    }
 	    console.log("Updating postPerDayData");
 	    for(i = 0 ; i < 7 ; ++i) {
-		postPerDayData.datasets.data[i] = data.postData[0][i];
+		postPerDayData.datasets[0].data[i] = data.postData[1][i];
 	    }
 	}
 
@@ -122,7 +129,9 @@ liveDataSocket = function() {
 	]
     };
 
-   var postRatioData = [
+    hoochymama = postPerDayData;
+
+    var postRatioData = [
 	{
             value: 0,
             color:"#F7464A",
@@ -208,10 +217,10 @@ chartOptions = {
     segmentStrokeWidth : 2,
 
     //Number - The percentage of the chart that we cut out of the middle
-    percentageInnerCutout : 50, // This is 0 for Pie charts
+    percentageInnerCutout : 0, // This is 0 for Pie charts
 
     //Number - Amount of animation steps
-    animationSteps : 1000,
+    animationSteps : 100,
 
     //String - Animation easing effect
     animationEasing : "easeOutBounce",

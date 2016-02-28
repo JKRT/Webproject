@@ -194,7 +194,7 @@ function changePassword() {
     var message = {
         "oldPassword": document.getElementById("oldPassword").value,
         "newPassword": document.getElementById("newPassword").value,
-        "email": sessionStorage.email,
+        "email": sessionStorage.email
     };
 
     var request = new TwiddlerRequest("POST", "/change_password",
@@ -205,7 +205,8 @@ function changePassword() {
 
 function changePasswordHandler(response) {
     messageData = JSON.parse(response);
-    if (messageData.success) document.getElementById("changePasswordForm").reset();
+    if (messageData.success) 
+	document.getElementById("changePasswordForm").reset();
 }
 
 window.onload = function() {
