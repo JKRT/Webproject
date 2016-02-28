@@ -1,5 +1,5 @@
 tsocket = null;
-msocket = null;
+lsocket = null;
 TwiddlerSocket = function(email, token) {
     var userEmail = email;
     var userToken = token;
@@ -63,7 +63,7 @@ liveDataSocket = function() {
     };
 
     handle.onmessage = function(event) {
-	data = JSON.parse(event.data);
+	hoochymama = data = JSON.parse(event.data);
 	console.log("Live data socket recieved message:" + data);
 	//riktigt fult..
 	if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "genderStatistics") {
@@ -72,8 +72,16 @@ liveDataSocket = function() {
 		genderRatioData[i].value = data.genderStatistics[i];
 	    }
 	    console.log("Gender statistics updated");
-	} else if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "postData" ) {        console.log("Updating post related data" + data);
-															  
+	} else if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "postData" ) {       								
+	    console.log("Updating post related data" + data);
+	    console.log("Updating postRatioData");
+	    for (i = 0; i < 2 ; ++i) {
+		postRatioData[i].value = data.postData[0][i];
+	    }
+	    console.log("Updating postPerDayData");
+	    for(i = 0 ; i < 7 ; ++i) {
+		postPerDayData.datasets.data[i] = data.postData[0][i];
+	    }
 	}
 
     };
@@ -84,6 +92,21 @@ liveDataSocket = function() {
 	    var myBarChart = new Chart(ctx).Pie(genderRatioData, chartOptions);
 	}
     };
+
+    this.renderPostRatioChart = function() {
+	if (currentView.name == "showAccount") {
+	    var ctx = document.getElementById("postRatioCanvas").getContext("2d");
+	    var myBarChart = new Chart(ctx).Pie(postRatioData, chartOptions);
+	}
+    };
+
+    this.renderPostPerDayChart = function() {
+	if (currentView.name == "showAccount") {
+	    var ctx = document.getElementById("postPerDayCanvas").getContext("2d");
+	    var myBarChart = new Chart(ctx).Bar(postPerDayData, postPerDayOptions);
+	}
+    };
+
 
     var postPerDayData = {
 	labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
@@ -137,7 +160,7 @@ liveDataSocket = function() {
 
 };
 
-postPerDayoptions = {
+postPerDayOptions = {
     //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
     scaleBeginAtZero : true,
 

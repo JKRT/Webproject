@@ -113,17 +113,17 @@ def media_socket():
             token = message["token"]
         #Check to see what update should be sent back to the client
         if message["message"] == "post":
-            print "Return post data from the database"
+            print "Fetching post related statistics"
+            data = database_helper.get_post_statistics(token)
+            print "hoochy mama"
+            print data
+            ws.send(data);
+            
         elif message["message"] == "signup":
             print "Fetching signup related data"
             data = database_helper.get_gender_statistics(token)
             print data
-            ws.send(data)
-        elif message["message"] == "post":
-            print "Fetching post related statistics"
-            data = database_helper.get_post_statistics(token)
-            print data
-            ws.send(data);
+            ws.send(data)       
 
     return json.dumps({"success": True,
                        "message": "Socket closing down!"})
