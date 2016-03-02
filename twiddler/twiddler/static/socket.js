@@ -1,5 +1,5 @@
 tsocket = null;
-lsocket = null;
+
 TwiddlerSocket = function(email, token) {
     var userEmail = email;
     var userToken = token;
@@ -21,29 +21,17 @@ TwiddlerSocket = function(email, token) {
 	handle.close(); 
     };
 
-    handle.onmessage = function(event) {
-	if( event.data === "close" ) {
-	    console.log("Logging user out of application...");
-	    sessionStorage.removeItem("token");
-	    displayView(); 
-	}
-    };
-};
-
-
-liveDataSocket = function() {
-    console.log("Connecting to liveDataSocket...");
-    var handle = new WebSocket("ws://localhost:7777/media_socket");
-    // Todo move this accordingly
-    this.ctx = null; //document.getElementById("activeUsersCanvas").getContext("2d");
-    this.myBarChart = null; //new Chart(ctx).Bar(this.data, options);
+    /*Live data related functions */
+    this.ctx = null; 
+    this.myBarChart = null; 
 
     /*Updates post data and generates a graph*/
     this.updatePostData = function (userToken) {
 	console.log("Called updatePostRatio");
 	data = {token: userToken, message:"post"};
-	handle.send( JSON.stringify(data));
+	handle.send(JSON.stringify(data));
     };
+
     /*Updates gender ratio and renders the pie-chart */
     this.updateGenderRatio = function (userToken) { 
 	console.log("Called updateGenderRatio");
@@ -51,46 +39,41 @@ liveDataSocket = function() {
 	handle.send(JSON.stringify(data));
     };
 
-    console.log("State of liveDataSocket connection is '" + handle.readyState + "'.");
-
-    handle.onopen = function(event) {
-        console.log("Live data socket has opened!");
-	/*Set up existing data */
-    };
-
-    this.close = function() { 
-	console.log("Live data socket has closed!");
-	handle.close(); 
+    handle.onmessage = function(event) {
+	/*When the close signal is sent from the webserver */
+	data = JSON.parse(event.data);
+	console.log(data); 
+	if( data === "close" ) {
+	    console.log("Logging user out of application...");
+	    sessionStorage.removeItem("token");
+	    displayView(); 
+	} else if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == 
+	   "genderStatistics"){ 
+	    console.log("Updating gender data");
+	    for (i = 0; i < 2 ; ++i) {
+		genderRatioData[i].value = data.genderStatistics[i];
+	    }
+	    tsocket.renderGenderChart();
+	} else if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') 
+		  == "postData" ) {
+	    console.log("Updating post related data" + data);
+	    console.log("Updating postRatioData");
+	    for (i = 0 ; i < 2 ; ++i){
+		postRatioData[i].value = data.postData[0][i];
+	    }
+	    console.log("Updating postPerDayData");
+	    for(i = 0 ; i < 7 ; ++i){
+		postPerDayData.datasets[0].data[i] = data.postData[1][i];
+	    }
+	    tsocket.renderPostRatioChart();
+	    tsocket.renderPostPerDayChart();
+	}
     };
 
     this.initData = function(token) {
     	console.log("Called init data");
     	this.updatePostData(token);
     	this.updateGenderRatio(token);
-    };
-
-    handle.onmessage = function(event) {
-	data = JSON.parse(event.data);
-	console.log("Live data socket recieved message:" + data);
-	//riktigt fult..
-	if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "genderStatistics") {
-	    console.log("Updating gender data");
-	    for ( i = 0; i < 3; ++i ) {
-		genderRatioData[i].value = data.genderStatistics[i];
-	    }
-	    console.log("Gender statistics updated");
-	} else if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == "postData" ) {       								
-	    console.log("Updating post related data" + data);
-	    console.log("Updating postRatioData");
-	    for (i = 0; i < 2 ; ++i) {
-		postRatioData[i].value = data.postData[0][i];
-	    }
-	    console.log("Updating postPerDayData");
-	    for(i = 0 ; i < 7 ; ++i) {
-		postPerDayData.datasets[0].data[i] = data.postData[1][i];
-	    }
-	}
-
     };
   
     this.renderGenderChart = function () {
@@ -114,61 +97,59 @@ liveDataSocket = function() {
 	}
     };
 
-
-    var postPerDayData = {
-	labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-	datasets: [
-            {
-		label: "My First dataset",
-		fillColor: "rgba(300,220,220,0.5)",
-		strokeColor: "rgba(220,220,220,0.8)",
-		highlightFill: "rgba(400,220,220,0.75)",
-		highlightStroke: "rgba(220,220,220,1)",
-		data: [0, 0, 0, 0, 0, 0, 0]
-            }
-	]
-    };
-
-    hoochymama = postPerDayData;
-
-    var postRatioData = [
-	{
-            value: 0,
-            color:"#F7464A",
-            highlight: "#FF5A5E",
-            label: "Red"
-	},
-	{
-            value: 0,
-            color: "#FDB45C",
-            highlight: "#FFC870",
-            label: "Yellow"
-	}
-    ];
-
-    var genderRatioData = [
-	{
-            value: 0,
-            color:"#F7464A",
-            highlight: "#FF5A5E",
-            label: "Men"
-	},
-	{
-            value: 0,
-            color: "#46BFBD",
-            highlight: "#5AD3D1",
-            label: "Gender-neutral"
-	},
-	{
-            value: 0,
-            color: "#FDB45C",
-            highlight: "#FFC870",
-            label: "Women"
-	}
-    ];
-
 };
 
+var postPerDayData = {
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    datasets: [
+        {
+	    label: "My First dataset",
+	    fillColor: "rgba(300,220,220,0.5)",
+	    strokeColor: "rgba(220,220,220,0.8)",
+	    highlightFill: "rgba(400,220,220,0.75)",
+	    highlightStroke: "rgba(220,220,220,1)",
+	    data: [0, 0, 0, 0, 0, 0, 0]
+        }
+    ]
+};
+var postRatioData = [
+    {
+        value: 0,
+        color:"#F7464A",
+        highlight: "#FF5A5E",
+        label: "Sent"
+    },
+    {
+        value: 0,
+        color: "#FDB45C",
+        highlight: "#FFC870",
+        label: "Recieved"
+    }
+];
+
+var genderRatioData = [
+    {
+        value: 0,
+        color:"#F7464A",
+        highlight: "#FF5A5E",
+        label: "Men"
+    },
+    {
+        value: 0,
+        color: "#46BFBD",
+        highlight: "#5AD3D1",
+        label: "Gender-neutral"
+    },
+    {
+        value: 0,
+        color: "#FDB45C",
+        highlight: "#FFC870",
+        label: "Women"
+    }
+];
+
+
+/* Chart related options follow below this poi */
 postPerDayOptions = {
     //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
     scaleBeginAtZero : true,

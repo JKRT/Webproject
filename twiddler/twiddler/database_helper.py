@@ -222,14 +222,8 @@ def get_post_statistics(token):
         return json.dumps(total_data)
 
 
-def get_gender_statistics(token):
+def get_gender_statistics():
     with Database() as cursor:
-        user_id = get_user_id(cursor,token)
-        cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
-        
-        if cursor.fetchone() == None:
-            return json.dumps( {"success": False, "message": "You are not signed in."})
-        
         cursor.execute("select COUNT(*) from users where gender='male'");
         males = cursor.fetchone()
         cursor.execute("select COUNT(*) from users where gender='hen'");

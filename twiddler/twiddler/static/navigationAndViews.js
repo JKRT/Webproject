@@ -6,7 +6,7 @@ function displayView() {
     console.log("Display view called");
     if(sessionStorage.token)  {
 	console.log("Trying to fetch the home view");
-	lsocket.initData(sessionStorage.token);
+	
 	switch(currentView.name) {
 	case "showHome":
 	    saveStateAndRedirect("Home");
@@ -173,9 +173,9 @@ function showAccount() {
     document.getElementById("chatPanel").style.display = "none";
     document.getElementById("chatBoxPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
-    lsocket.renderPostRatioChart();
-    lsocket.renderGenderChart();
-    lsocket.renderPostPerDayChart();
+    tsocket.renderGenderChart();
+    tsocket.renderPostRatioChart();
+    tsocket.renderPostPerDayChart();
 }
 
 function browseUsers(reload){

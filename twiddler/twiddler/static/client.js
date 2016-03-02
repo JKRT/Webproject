@@ -10,7 +10,7 @@ currentlyViewing = "";
 function checkSignUp() {
     console.log("Called checkSignUp()");
     console.log("Updating user statistics");
-    lsocket.updateGenderRatio();
+    
     if(document.getElementById("password2").value === document.getElementById("repeatPsw").value) {
         var dataObject = {email: document.getElementById("email2").value,
                           password: document.getElementById("password2").value,
@@ -211,7 +211,6 @@ function changePasswordHandler(response) {
 
 window.onload = function() {
     tsocket = new TwiddlerSocket(null, sessionStorage.token);
-    lsocket = new liveDataSocket();
     initPages();
     displayView();
 };

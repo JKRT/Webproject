@@ -46,7 +46,8 @@ def websocket():
                 email = json.loads(database_helper.get_user_data_by_token(token))["data"]["email"]
                 refresh = True
             elif len(message) == 2:
-                email = message["email"]
+                if "email" in message:
+                    email = message["email"]
             else:
                 #The case when we recieve a message without contents. 
                 print "Keeping the conncetion alive"
@@ -54,7 +55,6 @@ def websocket():
                 ws.close()
                 return json.dumps({"success": True,
                                    "message": "Socket is kept alive"})
-
 
             print "Attempting to validate user with the given token..."
             query = json.loads(database_helper.get_user_data_by_token(token))
@@ -64,13 +64,13 @@ def websocket():
                 print "Query failed. Oops?"
                 return json.dumps({"success": False,
                        "message": "Initial query failed!"})
+            #Request requested overwrite the old socket
             if refresh:
                 print "Refresh requested"
                 active_users[email] = ws
             #Decide what to do from the message, autologout process
             elif email in active_users:
                 print "Closing all active sockets of user..."
-                #Ta bort alla hans tokens fy fan.
                 database_helper.sign_out_all(email,token)
                 active_users[email].send("close")
                 active_users[email] = ws
@@ -79,9 +79,27 @@ def websocket():
                 print "No active sockets Nice!"
                 active_users[email] = ws
                 print "User has now the current socket session!"
-            print "Active users are: '" + json.dumps(active_users.keys()) + "'."
-    except Exception,e:
-        print e
+                print "Active users are: '" + json.dumps(active_users.keys()) + "'."
+            #Login related statements done handling live data.
+            print "Checking for live data requests"
+            print message
+            if "message" in message:
+                print "Checking the message row 88"
+                if message["message"] == "post":
+                    print "Fetching post related statistics"
+                    data = database_helper.get_post_statistics(token)
+                    print data
+                    ws.send(data);
+                elif message["message"] == "signup":
+                    print "Fetching signup related data"
+                    data = database_helper.get_gender_statistics()
+                    print data
+                    ws.send(data)
+            print "Done checking live data requests"
+    except Exception as e:
+        #Observe that the execption is always thrown the first time
+        print "Caught exception"
+        print type(e)
         ws.send("406: Shit happens yo")
         ws.close()
         return json.dumps({"success": False,
@@ -91,41 +109,6 @@ def websocket():
     return json.dumps({"success": True,
            "message": "Successfully linked socket with user! Yay!"})
 
-@app.route('/media_socket')
-def media_socket():
-    print "Client request recieved @media_socket"
-    if request.environ.get('wsgi.websocket'):
-        ws = request.environ['wsgi.websocket']
-        print "media_socket bound between client and server!"
-    else:
-        return json.dumps({"success": False,
-                           "message": "Failed to bind socket!"})
-    while True:
-        print "Waiting..."
-        print "Preparing to send data to the server"
-        token = "" 
-        message = ws.receive()
-        message = json.loads(message)
-        if message == None:
-            print "Recieved empty message"
-        else:
-            print message
-            token = message["token"]
-        #Check to see what update should be sent back to the client
-        if message["message"] == "post":
-            print "Fetching post related statistics"
-            data = database_helper.get_post_statistics(token)
-            print data
-            ws.send(data);
-            
-        elif message["message"] == "signup":
-            print "Fetching signup related data"
-            data = database_helper.get_gender_statistics(token)
-            print data
-            ws.send(data)       
-
-    return json.dumps({"success": True,
-                       "message": "Socket closing down!"})
 
 @app.route('/', methods=['GET'])
 def index():
@@ -167,10 +150,14 @@ def sign_up( email = None, password = None, first_name = None ,
     for key,value in input_dict.items():
         if  input_dict[key] is None or input_dict[key] == "":
             return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
-
-    return database_helper.sign_up(input_dict["email"],input_dict["password"] , input_dict["first_name"] 
+        
+    jsonData = database_helper.sign_up(input_dict["email"],input_dict["password"] , input_dict["first_name"] 
                                    , input_dict["family_name"] , input_dict["gender"] 
                                    , input_dict["city"] , input_dict["country"])
+    for email in active_users:
+        data = database_helper.get_gender_statistics()
+        a[k].send(data)
+    return jsonData
 
 @app.route('/sign_out', methods=['POST'])
 def sign_out(email = None, hmac = None, salt = None):
@@ -283,8 +270,12 @@ def post_message(message = None, media = None, email = None, semail = None, hmac
     if token == None or message == None or email == None:
         return json.dumps({"success": False, "message": "You are not signed in."})
     else: 
-        return database_helper.post_message(token, message, email)
-
+        json_data = database_helper.post_message(token, message, email)
+        for email in active_users:
+            data = database_helper.get_post_statistics(token)
+            print data
+            active_users[email].send(data);
+        return json_data
 if __name__ == '__main__':
     #app.run(debug=True)
     pass
