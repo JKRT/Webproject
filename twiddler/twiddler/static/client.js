@@ -45,6 +45,7 @@ function checkSignUp() {
 
 function signUpHandler(response) {
     signUpObject = JSON.parse(response);
+    console.log("Called signUpHandler");
     if(!signUpObject.success) {
         var email2 = document.getElementById("email2");
         email2.setCustomValidity("User already exists!");
@@ -91,6 +92,7 @@ function checkLogin() {
 function loginHandler(response) {
     signInObject = JSON.parse(response);
     var email = document.getElementById("email1").value;
+    console.log("called loginHandler with email:" + email);
     if(!signInObject.success) {
         var email1 = document.getElementById("email1");
         email1.setCustomValidity("User doesn't exist!");

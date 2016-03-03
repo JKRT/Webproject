@@ -14,6 +14,7 @@ TwiddlerSocket = function(email, token) {
 	if(userEmail != null) {
 	    /*Normal mode request the opening of a new socket */
             data = {email: userEmail, token: userToken};
+	    handle.send(JSON.stringify(data));
 	} else {
 	    /*When a refresh is suggested */
 	    data = {token:userToken};
@@ -47,8 +48,13 @@ TwiddlerSocket = function(email, token) {
 
     handle.onmessage = function(event) {
 	/*When the close signal is sent from the webserver */
-	data = JSON.parse(event.data);
-	console.log(data); 
+	console.log("Hoochy mama!");
+	data = event.data;
+	if (data != "close") {
+	    data = JSON.parse(data);
+	}
+	console.log(data);
+
 	if( data === "close" ) {
 	    console.log("Logging user out of application...");
 	    sessionStorage.removeItem("token");
@@ -56,7 +62,7 @@ TwiddlerSocket = function(email, token) {
 	} else if(JSON.stringify(data).replace('{' , '').split(':')[0].replace(/^"(.*)"$/, '$1') == 
 	   "genderStatistics"){ 
 	    console.log("Updating gender data");
-	    for (i = 0; i < 2 ; ++i) {
+	    for (i = 0; i < 3 ; ++i) {
 		genderRatioData[i].value = data.genderStatistics[i];
 	    }
 	    tsocket.renderGenderChart();
@@ -150,7 +156,7 @@ var genderRatioData = [
         value: 0,
         color: "#FDB45C",
         highlight: "#FFC870",
-        label: "Women"
+        label: "Females"
     }
 ];
 
@@ -168,6 +174,9 @@ postPerDayOptions = {
 
     //Number - Width of the grid lines
     scaleGridLineWidth : 1,
+
+    // String - Color of the text.
+    scaleFontColor: "rgba(0, 0, 0, )",
 
     //Boolean - Whether to show horizontal lines (except X axis)
     scaleShowHorizontalLines: true,
