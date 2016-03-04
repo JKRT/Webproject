@@ -59,6 +59,11 @@ def websocket():
             print "Attempting to validate user with the given token..."
             query = json.loads(database_helper.get_user_data_by_token(token))
 
+            try:
+                del active_users[""]
+            except:
+                print "Error"
+
             if not query["success"]:
                 ws.close()
                 print "Query failed. Oops?"
@@ -72,9 +77,11 @@ def websocket():
             elif email in active_users:
                 print "Closing all active sockets of user..."
                 database_helper.sign_out_all(email,token)
-                active_users[email].send("close")
-                active_users[email] = ws
-                print "User has now the current socket session!"
+                if active_users[email] != ws:
+                    print "Sending close to old socket"
+                    active_users[email].send("close")
+                    active_users[email] = ws
+
             elif email not in active_users:
                 print "No active sockets Nice!"
                 active_users[email] = ws
@@ -156,7 +163,7 @@ def sign_up( email = None, password = None, first_name = None ,
                                    , input_dict["city"] , input_dict["country"])
     for email in active_users:
         data = database_helper.get_gender_statistics()
-        a[k].send(data)
+        active_users[email].send(data)
     return jsonData
 
 @app.route('/sign_out', methods=['POST'])
