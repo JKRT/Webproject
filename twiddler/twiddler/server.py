@@ -45,9 +45,16 @@ def websocket():
             if len(message) == 1:
                 email = json.loads(database_helper.get_user_data_by_token(token))["data"]["email"]
                 refresh = True
+                print "Refresh requested"
             elif len(message) == 2:
+                print "Assigning email"
                 if "email" in message:
                     email = message["email"]
+                else:
+                    #Looking up the mail
+                    for key in active_users:
+                        if active_users[key] == ws:
+                            email = key
             else:
                 #The case when we recieve a message without contents. 
                 print "Keeping the conncection alive"
@@ -58,11 +65,6 @@ def websocket():
 
             print "Attempting to validate user with the given token..."
             query = json.loads(database_helper.get_user_data_by_token(token))
-
-            try:
-                del active_users[""]
-            except:
-                print "Error"
 
             if not query["success"]:
                 ws.close()
@@ -82,7 +84,7 @@ def websocket():
                     active_users[email].send("close")
                     active_users[email] = ws
 
-            elif email not in active_users:
+            elif email not in active_users and email != "":
                 print "No active sockets Nice!"
                 active_users[email] = ws
                 print "User has now the current socket session!"
@@ -91,9 +93,8 @@ def websocket():
             print "Checking for live data requests"
             print message
             if "message" in message:
-                print "Checking the message row 88"
                 if message["message"] == "post":
-                    print "Fetching post related statistics"
+                    print "Fetching post related statistics for:" + email
                     data = database_helper.get_post_statistics(email)
                     print data
                     ws.send(data);
@@ -106,16 +107,12 @@ def websocket():
     except Exception as e:
         #Observe that the execption is always thrown the first time
         print "Caught exception"
+        print "Active users are" + str(active_users)
         print type(e)
         ws.send("406: Shit happens yo")
         ws.close()
         return json.dumps({"success": False,
                "message": "Something went very wrong..."})
-
-    print "Seems we got out of the loop? Wat?"
-    return json.dumps({"success": True,
-           "message": "Successfully linked socket with user! Yay!"})
-
 
 @app.route('/', methods=['GET'])
 def index():

@@ -212,7 +212,8 @@ function changePasswordHandler(response) {
 }
 
 window.onload = function() {
-    tsocket = new TwiddlerSocket(null, sessionStorage.token);
+    console.log("Called window onload");
     initPages();
     displayView();
+    tsocket = new TwiddlerSocket(null, sessionStorage.token);
 };

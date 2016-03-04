@@ -173,9 +173,13 @@ function showAccount() {
     document.getElementById("chatPanel").style.display = "none";
     document.getElementById("chatBoxPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
-    tsocket.renderPostPerDayChart();
-    tsocket.renderGenderChart();
-    tsocket.renderPostRatioChart();
+    /*Handling a special case when a refresh occurs when viewing the account pane 
+     Stupid page.js ...*/
+    if(tsocket !== null) {
+	tsocket.renderPostPerDayChart();
+	tsocket.renderGenderChart();
+	tsocket.renderPostRatioChart();
+    }
 }
 
 function browseUsers(reload){
