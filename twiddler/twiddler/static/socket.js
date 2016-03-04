@@ -87,26 +87,36 @@ TwiddlerSocket = function(email, token) {
     	this.updatePostData(token);
     	this.updateGenderRatio(token);
     };
-  
+    
+    /*Renders the genderatio chart, if one is already existing it will redraw  */
     this.renderGenderChart = function () {
 	if (currentView.name == "showAccount") {
-	    var ctx = document.getElementById("genderBalanceCanvas").getContext("2d");
-	    var myBarChart = new Chart(ctx).Pie(genderRatioData, chartOptions);
+	    if (typeof genderChart !== 'undefined') {
+		genderChart.destroy();
+	    }
+	    genderRatioCtx = document.getElementById("genderBalanceCanvas").getContext("2d");
+	    genderChart = new Chart(genderRatioCtx).Pie(genderRatioData, chartOptions);
 	}
     };
-
+    /*Renders the genderatio chart, if one is already existing it will redraw  */
     this.renderPostRatioChart = function() {
 	if (currentView.name == "showAccount") {
-	    var ctx = document.getElementById("postRatioCanvas").getContext("2d");
-	    var myBarChart = new Chart(ctx).Pie(postRatioData, chartOptions);
+	    if (typeof postRatioChart !== 'undefined') {
+		postRatioChart.destroy();
+	    }
+	    postRatioCtx = document.getElementById("postRatioCanvas").getContext("2d");
+	    postRatioChart = new Chart(postRatioCtx).Pie(postRatioData, chartOptions);
 	}
     };
-
+    /*Renders the post per day chart, if one is already existing it will redraw  */
     this.renderPostPerDayChart = function() {
-	if (currentView.name == "showAccount") {
-	    var ctx = document.getElementById("postPerDayCanvas").getContext("2d");
-	    var myBarChart = new Chart(ctx).Bar(postPerDayData, postPerDayOptions);
-	}
+    	if (currentView.name == "showAccount") {
+	    if (typeof postsPerDayChart !== 'undefined') {
+		postsPerDayChart.destroy();
+	    }
+	    postPerDayCtx = document.getElementById("postPerDayCanvas").getContext("2d");
+    	    postsPerDayChart = new Chart(postPerDayCtx).Bar(postPerDayData, postPerDayOptions);
+    	}
     };
 
 };

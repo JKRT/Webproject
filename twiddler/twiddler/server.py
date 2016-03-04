@@ -50,7 +50,7 @@ def websocket():
                     email = message["email"]
             else:
                 #The case when we recieve a message without contents. 
-                print "Keeping the conncetion alive"
+                print "Keeping the conncection alive"
                 ws.send("Keeping the dream alive")
                 ws.close()
                 return json.dumps({"success": True,
@@ -94,7 +94,7 @@ def websocket():
                 print "Checking the message row 88"
                 if message["message"] == "post":
                     print "Fetching post related statistics"
-                    data = database_helper.get_post_statistics(token)
+                    data = database_helper.get_post_statistics(email)
                     print data
                     ws.send(data);
                 elif message["message"] == "signup":
@@ -279,9 +279,10 @@ def post_message(message = None, media = None, email = None, semail = None, hmac
     else: 
         json_data = database_helper.post_message(token, message, email)
         for email in active_users:
-            data = database_helper.get_post_statistics(token)
-            print data
+            data = database_helper.get_post_statistics(str(email))
+            print str(data) + "for:" + (email)
             active_users[email].send(data);
+        print "Returning json at post_message"
         return json_data
 if __name__ == '__main__':
     #app.run(debug=True)

@@ -192,10 +192,18 @@ def sign_out_all(email, token):
 def generate_token():
     return str(uuid.uuid4()).replace('-', '')
 
-def get_post_statistics(token):
+def get_post_statistics(email):
     with Database() as cursor:
         print "get post statistics"
-        user_id = get_user_id(cursor,token)
+        user_id = ""
+    
+        try:
+            cursor.execute("SELECT id FROM users WHERE email=?", (email,))
+            user_id =  cursor.fetchone()[0]
+            print "user_id " +  ":" + user_id
+        except Exception as e:
+            print type(e)
+    
         data_cursor = ""
         post_per_day_data = []
         

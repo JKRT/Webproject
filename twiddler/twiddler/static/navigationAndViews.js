@@ -173,9 +173,9 @@ function showAccount() {
     document.getElementById("chatPanel").style.display = "none";
     document.getElementById("chatBoxPanel").style.display = "none";
     document.getElementById("browsePanel").style.display = "none";
+    tsocket.renderPostPerDayChart();
     tsocket.renderGenderChart();
     tsocket.renderPostRatioChart();
-    tsocket.renderPostPerDayChart();
 }
 
 function browseUsers(reload){
