@@ -133,7 +133,8 @@ function showHomeHandler(response) {
 function initHome(userData) {
     console.log("called initHome");
     function writeToHome ( ElementById , hpDataMember, desc){
-        document.getElementById( ElementById ).innerHTML = "<strong>" + desc + "</strong>" + hpDataMember;
+        var desc = "<strong>" + desc + "</strong>" + hpDataMember;
+        document.getElementById( ElementById ).innerHTML = desc;
     }
     writeToHome("homeEmail" , userData.data.email, "E-mail: ");
     writeToHome("homeFirstName" , userData.data.firstname, "First name: ");
@@ -158,7 +159,10 @@ function initHomeHandler(response) {
     var messageData = JSON.parse(response);
     var chatLog = "";
     for (var message of messageData.data) {
-        chatLog += "<strong>" + message.writer + "</strong>: " + message.content + "<br>";
+        var header = "<strong>" + message.writer + ":</strong>";
+        var post = "<div ondragstart='dragStart(event)' draggable='true'>" + message.content + "</div><br>";
+        var message = header + post;
+        chatLog += message;
     }
 
     document.getElementById("chatPanel").innerHTML = chatLog;

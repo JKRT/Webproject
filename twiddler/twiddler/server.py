@@ -258,11 +258,11 @@ def post_message(message = None, media = None, email = None, semail = None, hmac
                 media_tag = ""
                 media_path = "media/" + filename
                 if filename[-3:] in ALLOWED_EXTENSIONS[:2]:
-                    media_tag = "<img src='" + media_path + "' width=290>"
+                    media_tag = "<img draggable='false' src='" + media_path + "' width=290>"
                 elif filename[-3:] in ALLOWED_EXTENSIONS[-2:]:
                     mp4_source = "<source src='" + media_path + "' type='video/mp4'>"
                     ogg_source = "<source src='" + media_path + "' type='video/ogg'>"
-                    media_tag = "<video width=290 controls>" + mp4_source + ogg_source + "</video>"
+                    media_tag = "<video draggable='false' width=290 controls>" + mp4_source + ogg_source + "</video>"
                 message = media_tag + message + "<br>"
             except:
                 pass
