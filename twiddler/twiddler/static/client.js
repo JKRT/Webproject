@@ -205,6 +205,10 @@ function changePassword() {
     return false;
 }
 
+/* Upon password change success, just clear the form
+ * data. Otherwise, message to the user that the password
+ * was given incorrectly or in the wrong format. Yea baby. */
+
 function changePasswordHandler(response) {
     messageData = JSON.parse(response);
     if (messageData.success) 
