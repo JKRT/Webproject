@@ -30,6 +30,12 @@ def websocket():
         while True:
             print "Waiting..."
             message = ws.receive()
+
+            # When the client closes the socket, make sure
+            # that the active_users entry is removed of bound
+            # user. This ensures that the next time the user
+            # tries to log in no one will be in their entry.
+
             if message == None:
                 print "Client closed socket?"
                 email = bound_email(ws)
@@ -41,6 +47,7 @@ def websocket():
             message = json.loads(message)
             token = message["token"] ; email = ""
             refresh = False;
+
             #If this is the case the user has a token and we can just refresh the socket.
             if len(message) == 1:
                 email = json.loads(database_helper.get_user_data_by_token(token))["data"]["email"]
@@ -84,6 +91,8 @@ def websocket():
                     active_users[email].send("close")
                     active_users[email] = ws
 
+            # If no sockets are bound to this user, just give
+            # the current session to this socket.
             elif email not in active_users and email != "":
                 print "No active sockets Nice!"
                 active_users[email] = ws
@@ -246,14 +255,22 @@ def post_message(message = None, media = None, email = None, semail = None, hmac
     token = database_helper.valid_token(semail, hmac, salt)
 
     if media != None:
+        # Determine if the file extension
+        # is supported by the server.
         if valid_media(media.filename):
             salt = str(uuid.uuid4())
+
+            # The client can provide malicious filenames that
+            # can pose security risks. We handle this case here.
             filename = secure_filename(media.filename)
+
+            # Actually save the file on the server with the salted filename.
             media.save(os.path.join(app.config['UPLOAD_FOLDER'], salt + "_" +  filename))
             information = "Media '{}' uploaded to server by '{}' in folder '{}'."
             print information.format(media.filename, email, app.config['UPLOAD_FOLDER'])
             print "Effective path is: '{}/{}'".format(app.config['UPLOAD_FOLDER'], salt + "_" + filename)
             filename = salt + "_" + filename
+
             try:
                 media_tag = ""
                 media_path = "media/" + filename
