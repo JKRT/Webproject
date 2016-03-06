@@ -175,3 +175,32 @@ button.chatButton {
 div.genderBalanceChart {
     text-align: right;
 }
+
+#chartPanel {
+    width: 100%;
+    height: 100%;
+}
+
+#postPerDayChart {
+    width: 100%;
+    height: 40%;
+    text-align: center;
+}
+
+#postPerDayCanvas {
+    width: 90%;
+    height: 100%;
+}
+
+#genderBalanceChart {
+    width: 100%;
+    height: 36%;
+}
+
+#wizard {
+    cursor: pointer;
+    position: fixed;
+    width: 90px;
+    bottom: 10px;
+    left: 10px;
+}

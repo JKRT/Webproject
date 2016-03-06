@@ -122,51 +122,50 @@ TwiddlerSocket = function(email, token) {
 };
 
 var postPerDayData = {
-    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    labels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
     datasets: [
         {
-	    label: "My First dataset",
-	    fillColor: "rgba(300,220,220,0.5)",
-	    strokeColor: "rgba(220,220,220,0.8)",
-	    highlightFill: "rgba(400,220,220,0.75)",
-	    highlightStroke: "rgba(220,220,220,1)",
-	    data: [0, 0, 0, 0, 0, 0, 0]
+            label: "Posts Per Day",
+            fillColor: "rgb(57,77,205)",
+            highlightFill: "rgb(32,140,113)",
+            data: [0, 0, 0, 0, 0, 0, 0]
         }
     ]
 };
+
 var postRatioData = [
     {
         value: 0,
-        color:"#F7464A",
-        highlight: "#FF5A5E",
+        color:"#394dcd",
+        highlight: "#208c71",
         label: "Sent"
     },
     {
         value: 0,
-        color: "#FDB45C",
-        highlight: "#FFC870",
-        label: "Recieved"
+        color: "#e35f5f",
+        highlight: "#dfe300",
+        label: "Received"
     }
 ];
 
 var genderRatioData = [
     {
         value: 0,
-        color:"#F7464A",
-        highlight: "#FF5A5E",
+        color:"#394dcd",
+        highlight: "#208c71",
         label: "Men"
     },
     {
         value: 0,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Gender-neutral"
+        color: "#808080",
+        highlight: "#A0A0A0",
+        label: "Neutral"
     },
     {
         value: 0,
-        color: "#FDB45C",
-        highlight: "#FFC870",
-        label: "Females"
+        color: "#e35f5f",
+        highlight: "#dfe300",
+        label: "Women"
     }
 ];
 
@@ -180,13 +179,13 @@ postPerDayOptions = {
     scaleShowGridLines : false,
 
     //String - Colour of the grid lines
-    scaleGridLineColor : "rgba(0,0,0,.05)",
+    scaleGridLineColor : "rgba(0,0,0,1)",
 
     //Number - Width of the grid lines
     scaleGridLineWidth : 1,
 
     // String - Color of the text.
-    scaleFontColor: "rgba(0, 0, 0, )",
+    scaleFontColor: "rgba(0, 0, 0, 1)",
 
     //Boolean - Whether to show horizontal lines (except X axis)
     scaleShowHorizontalLines: true,
@@ -195,7 +194,7 @@ postPerDayOptions = {
     scaleShowVerticalLines: true,
 
     //Boolean - If there is a stroke on each bar
-    barShowStroke : true,
+    barShowStroke : false,
 
     //Number - Pixel width of the bar stroke
     barStrokeWidth : 2,
@@ -214,7 +213,7 @@ postPerDayOptions = {
 
 chartOptions = {
     //Boolean - Whether we should show a stroke on each segment
-    segmentShowStroke : true,
+    segmentShowStroke : false,
 
     //String - The colour of each segment stroke
     segmentStrokeColor : "#fff",

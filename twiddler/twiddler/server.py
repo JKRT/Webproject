@@ -7,7 +7,6 @@ import json
 import uuid
 import database_helper
 
-
 #active users should contain the websocket and the email adress
 active_users = dict()
 def bound_email(socket):
