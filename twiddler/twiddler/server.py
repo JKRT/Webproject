@@ -61,13 +61,6 @@ def websocket():
                     for key in active_users:
                         if active_users[key] == ws:
                             email = key
-            else:
-                #The case when we recieve a message without contents. 
-                print "Keeping the conncection alive"
-                ws.send("Keeping the dream alive")
-                ws.close()
-                return json.dumps({"success": True,
-                                   "message": "Socket is kept alive"})
 
             print "Attempting to validate user with the given token..."
             query = json.loads(database_helper.get_user_data_by_token(token))
@@ -92,7 +85,7 @@ def websocket():
 
             # If no sockets are bound to this user, just give
             # the current session to this socket.
-            elif email not in active_users and email != "":
+            elif email not in active_users:
                 print "No active sockets Nice!"
                 active_users[email] = ws
                 print "User has now the current socket session!"
