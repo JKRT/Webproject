@@ -66,7 +66,7 @@ function resetValidation (fieldName) {
     var field = document.getElementById(fieldName);
     field.setCustomValidity("");    
 }
-
+/*Check if the user is indeed a valid user */
 function checkLogin() {
     console.log("Called checkLogin()");
     var email = document.getElementById("email1").value;
@@ -108,7 +108,7 @@ function loginHandler(response) {
         displayView();
     }
 }
-
+/*Signs out the user */
 function logout() {
     console.log("logout() called");
 

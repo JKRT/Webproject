@@ -34,14 +34,15 @@ def valid_token(email, hmact, message):
         candidate_tokens = cursor.execute("SELECT id FROM tokens WHERE user_id=?", (user_id,))
         for candidate_token in candidate_tokens:
             h = hmac.new(str(candidate_token[0]), str(message), hashlib.sha1)
-            if str(hmact) == h.hexdigest(): return str(candidate_token[0])
+            if str(hmact) == h.hexdigest(): 
+                return str(candidate_token[0])
         return None
 
 def get_user_id(cursor, token):
     cursor.execute("SELECT user_id FROM tokens WHERE id=?", (token,))
     try:
-        a =  cursor.fetchone()[0]
-        return a
+        uid =  cursor.fetchone()[0]
+        return uid
     except: 
         return None
 
